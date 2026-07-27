@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Camera,
   Check,
-  FileCheck2,
   Image as ImageIcon,
   LayoutTemplate,
   Megaphone,
@@ -144,7 +143,7 @@ export default function Home() {
                   <div className="rounded-[1.7rem] bg-[var(--brand-primary)] p-4">
                     <div className="flex items-center justify-between"><span className="flex size-10 items-center justify-center rounded-2xl bg-white text-[var(--brand-primary)]"><Camera className="size-4" /></span><span className="text-[9px] font-bold uppercase tracking-[0.12em] text-white/50">Visual lab</span></div>
                     <p className="mt-5 text-sm font-semibold">3 сценария изображения</p>
-                    <p className="mt-2 text-xs leading-5 text-white/55">Packshot, lifestyle и примерка на модели.</p>
+                    <p className="mt-2 text-xs leading-5 text-white/55">Packshot, lifestyle и модельная примерка.</p>
                   </div>
                   <div className="rounded-[1.7rem] bg-[var(--brand-coral)] p-4">
                     <div className="flex items-center justify-between"><span className="flex size-10 items-center justify-center rounded-2xl bg-white text-[var(--brand-coral-strong)]"><ScanFace className="size-4" /></span><span className="rounded-full bg-[var(--brand-ink)] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em]">beta</span></div>
