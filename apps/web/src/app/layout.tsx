@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { colorScheme: "light", themeColor: "#4e46c8" };
+export const viewport: Viewport = { colorScheme: "light dark", themeColor: "#0b0a12" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
