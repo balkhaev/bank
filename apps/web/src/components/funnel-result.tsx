@@ -15,6 +15,7 @@ import {
   Search,
   Sparkles,
   WandSparkles,
+  type LucideIcon,
 } from "lucide-react";
 
 import { cn } from "@bank/ui/lib/utils";
@@ -27,6 +28,24 @@ const cardTones = [
   "bg-[var(--brand-primary)] text-white",
   "bg-[var(--brand-mint)] text-[var(--brand-ink)]",
 ] as const;
+
+const readyModules: Array<{ icon: LucideIcon; label: string }> = [
+  { icon: WandSparkles, label: "Позиционирование" },
+  { icon: ImageIcon, label: "3 карточки" },
+  { icon: Search, label: "Текст каталога" },
+  { icon: Megaphone, label: "Рекламные хуки" },
+];
+
+const advancedModules: Array<{
+  description: string;
+  icon: LucideIcon;
+  status?: string;
+  title: string;
+}> = [
+  { icon: ImageIcon, title: "Чистый packshot", description: "Удаление фона и аккуратная товарная сцена" },
+  { icon: Camera, title: "Lifestyle‑кадр", description: "Товар в реальном сценарии использования" },
+  { icon: ScanFace, title: "Модельная примерка", description: "Одежда или аксессуар на AI‑модели", status: "beta" },
+];
 
 const apparelPattern = /(одежд|плать|футбол|худи|рубаш|брюк|джинс|юбк|костюм|куртк|пальто|свит|обув|кроссов|сумк)/i;
 
@@ -102,7 +121,12 @@ export function FunnelResultView() {
   }
 
   const isFashion = result.businessType === "marketplace" && apparelPattern.test(result.subject);
-  const contentLabel = result.businessType === "marketplace" ? "Карточка товара" : result.businessType === "b2b" ? "Коммерческий текст" : "Текст объявления";
+  const contentLabel =
+    result.businessType === "marketplace"
+      ? "Карточка товара"
+      : result.businessType === "b2b"
+        ? "Коммерческий текст"
+        : "Текст объявления";
 
   return (
     <>
@@ -128,16 +152,11 @@ export function FunnelResultView() {
               </div>
 
               <div className="mt-9 grid gap-3 sm:grid-cols-4">
-                {[
-                  [WandSparkles, "Позиционирование", "готово"],
-                  [ImageIcon, "3 карточки", "готово"],
-                  [Search, "Текст каталога", "готово"],
-                  [Megaphone, "Рекламные хуки", "готово"],
-                ].map(([Icon, label, status]) => (
-                  <div className="rounded-[1.4rem] bg-[var(--brand-paper)] p-4" key={String(label)}>
+                {readyModules.map(({ icon: Icon, label }) => (
+                  <div className="rounded-[1.4rem] bg-[var(--brand-paper)] p-4" key={label}>
                     <Icon className="size-5 text-[var(--brand-primary)]" />
-                    <p className="mt-5 text-sm font-semibold">{String(label)}</p>
-                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-muted)]">{String(status)}</p>
+                    <p className="mt-5 text-sm font-semibold">{label}</p>
+                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-muted)]">готово</p>
                   </div>
                 ))}
               </div>
@@ -177,7 +196,7 @@ export function FunnelResultView() {
                 key={`${card.title}-${index}`}
               >
                 <div className="flex items-center justify-between gap-4 text-xs font-bold opacity-65"><span>{result.pack.projectName}</span><span>0{index + 1}</span></div>
-                <div className="mt-12 h-24 rounded-[1.5rem] border border-current/10 bg-current/[0.06] p-4">
+                <div className="mt-12 h-24 rounded-[1.5rem] border border-current/10 bg-white/10 p-4">
                   <div className="h-2 w-2/3 rounded-full bg-current/20" />
                   <div className="mt-3 h-2 w-1/2 rounded-full bg-current/10" />
                   <div className="mt-5 flex gap-2"><span className="size-5 rounded-full bg-current/15" /><span className="h-5 w-20 rounded-full bg-current/10" /></div>
@@ -242,15 +261,14 @@ export function FunnelResultView() {
               <p className="mt-5 text-sm leading-7 text-white/55">Базовый пакет уже готов. Расширенные изображения пока показаны как beta и не входят в текущую автоматическую выдачу.</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                [ImageIcon, "Чистый packshot", "Удаление фона и аккуратная товарная сцена"],
-                [Camera, "Lifestyle‑кадр", "Товар в реальном сценарии использования"],
-                [ScanFace, "Модельная примерка", "Одежда или аксессуар на AI‑модели", "beta"],
-              ].map(([Icon, title, description, status], index) => (
-                <article className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-5" data-reveal data-reveal-delay={String(index * 80)} key={String(title)}>
-                  <div className="flex items-center justify-between gap-3"><span className="flex size-11 items-center justify-center rounded-2xl bg-white text-[var(--brand-ink)]"><Icon className="size-5" /></span>{status && <span className="rounded-full bg-[var(--brand-coral)] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em]">{String(status)}</span>}</div>
-                  <h3 className="mt-7 text-xl font-bold">{String(title)}</h3>
-                  <p className="mt-3 text-sm leading-6 text-white/50">{String(description)}</p>
+              {advancedModules.map(({ description, icon: Icon, status, title }, index) => (
+                <article className="rounded-[2rem] border border-white/10 bg-white/[0.055] p-5" data-reveal data-reveal-delay={String(index * 80)} key={title}>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex size-11 items-center justify-center rounded-2xl bg-white text-[var(--brand-ink)]"><Icon className="size-5" /></span>
+                    {status && <span className="rounded-full bg-[var(--brand-coral)] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em]">{status}</span>}
+                  </div>
+                  <h3 className="mt-7 text-xl font-bold">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-white/50">{description}</p>
                 </article>
               ))}
             </div>
