@@ -99,21 +99,21 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
   };
 
   return (
-    <section className="relative min-h-[calc(100vh-8rem)] py-8 sm:py-14">
-      <div className="brand-grid pointer-events-none absolute inset-0 -z-10 opacity-20" />
-      <div className="motion-orb pointer-events-none absolute -left-40 top-20 -z-10 size-[32rem] rounded-full bg-[var(--brand-primary)]/10 blur-3xl" />
+    <section className="premium-dark-section relative min-h-[calc(100vh-8rem)] py-8 text-white sm:py-14">
+      <div className="premium-orbits pointer-events-none absolute inset-0 opacity-70" />
+      <div className="motion-orb pointer-events-none absolute -left-40 top-20 size-[32rem] rounded-full bg-[var(--brand-primary)]/18 blur-3xl" />
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[0.72fr_1.28fr] lg:px-8">
-        <aside className="relative overflow-hidden rounded-[2.5rem] bg-[var(--brand-ink)] p-6 text-white lg:sticky lg:top-6 lg:min-h-[42rem] lg:p-8" data-reveal>
+      <div className="relative mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[0.72fr_1.28fr] lg:px-8">
+        <aside className="relative overflow-hidden rounded-[2.5rem] border border-white/8 bg-white/[0.035] p-6 lg:sticky lg:top-6 lg:min-h-[42rem] lg:p-8" data-reveal>
           <div className="pointer-events-none absolute -right-24 -top-24 size-64 rounded-full bg-[var(--brand-primary)]/35 blur-3xl" />
           <span className="relative inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-2 text-xs font-semibold text-white/75">
             <Sparkles className="size-4 text-[var(--brand-mint)]" /> Делопуск AI Studio
           </span>
-          <h2 className="relative mt-7 text-balance text-4xl font-bold leading-[0.94] tracking-[-0.065em] sm:text-5xl">
-            Не анкета. Короткий бриф для AI‑команды.
+          <h2 className="font-editorial relative mt-8 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-5xl">
+            Короткий бриф для AI‑команды.
           </h2>
-          <p className="relative mt-5 max-w-md text-sm leading-7 text-white/55">
-            Три ответа превращаются в готовый комплект для каталога, рекламы и первого запуска.
+          <p className="relative mt-5 max-w-md text-sm leading-7 text-white/52">
+            Три ответа превращаются в комплект для каталога, рекламы и первого запуска.
           </p>
 
           <div className="relative mt-10 grid gap-3">
@@ -142,23 +142,23 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
         </aside>
 
         <div>
-          <div className="mb-6 flex items-end justify-between gap-4">
+          <div className="mb-6 flex items-end justify-between gap-4 text-white">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]">AI‑пакет запуска</p>
-              <p className="mt-1 text-sm text-[var(--brand-muted)]">Три шага. Контакты не нужны.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-violet-soft)]">AI‑пакет запуска</p>
+              <p className="mt-1 text-sm text-white/42">Три шага. Контакты не нужны.</p>
             </div>
-            <span className="rounded-full border border-[var(--brand-ink)]/8 bg-white px-3 py-1.5 text-xs font-bold">{step + 1}/3</span>
+            <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-xs font-bold">{step + 1}/3</span>
           </div>
 
-          <div className="mb-6 h-1.5 overflow-hidden rounded-full bg-[var(--brand-ink)]/8">
+          <div className="mb-6 h-1.5 overflow-hidden rounded-full bg-white/8">
             <div className="h-full rounded-full bg-[var(--brand-primary)] transition-[width] duration-500" style={{ width: `${progress}%` }} />
           </div>
 
-          <div className="min-h-[36rem] rounded-[2.5rem] border border-[var(--brand-ink)]/8 bg-white p-6 shadow-[0_36px_100px_-68px_rgba(21,22,35,0.7)] sm:p-10">
+          <div className="min-h-[36rem] rounded-[2.5rem] bg-[var(--brand-paper)] p-6 text-[var(--brand-ink)] shadow-[0_48px_120px_-70px_rgba(0,0,0,0.9)] sm:p-10">
             {step === 0 && (
               <div data-reveal>
                 <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 1 · формат</p>
-                <h1 className="mt-3 text-balance text-4xl font-bold leading-[0.96] tracking-[-0.06em] sm:text-6xl">Что запускаем?</h1>
+                <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Что запускаем?</h1>
                 <p className="mt-4 text-base leading-7 text-[var(--brand-muted)]">От этого зависит набор карточек, текстов и визуальных сценариев.</p>
                 <div className="mt-8 grid gap-3 sm:grid-cols-2">
                   {businessOptions.map((option) => {
@@ -169,15 +169,15 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
                           "rounded-[1.6rem] border p-5 text-left transition",
                           active
                             ? "border-[var(--brand-primary)] bg-[var(--brand-lavender)] ring-4 ring-[var(--brand-primary)]/8"
-                            : "border-[var(--brand-ink)]/8 bg-[var(--brand-paper)] hover:border-[var(--brand-primary)]/35",
+                            : "border-black/8 bg-white hover:border-[var(--brand-primary)]/35",
                         )}
                         key={option.value}
                         onClick={() => setBusinessType(option.value)}
                         type="button"
                       >
                         <span className="flex items-center justify-between gap-4">
-                          <span className="font-bold">{option.label}</span>
-                          <span className={cn("flex size-7 items-center justify-center rounded-full", active ? "bg-[var(--brand-primary)] text-white" : "bg-white")}>
+                          <span className="font-semibold">{option.label}</span>
+                          <span className={cn("flex size-7 items-center justify-center rounded-full", active ? "bg-[var(--brand-primary)] text-white" : "bg-[var(--brand-paper-deep)]")}>
                             {active && <Check className="size-4" strokeWidth={3} />}
                           </span>
                         </span>
@@ -192,11 +192,11 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
             {step === 1 && (
               <div data-reveal>
                 <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 2 · продукт</p>
-                <h1 className="mt-3 text-balance text-4xl font-bold leading-[0.96] tracking-[-0.06em] sm:text-6xl">Что нужно продать?</h1>
+                <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Что нужно продать?</h1>
                 <p className="mt-4 text-base leading-7 text-[var(--brand-muted)]">Опишите товар или услугу обычными словами. AI сам соберёт структуру предложения.</p>
                 <textarea
                   autoFocus
-                  className="mt-8 min-h-48 w-full resize-none rounded-[1.6rem] border border-[var(--brand-ink)]/10 bg-[var(--brand-paper)] p-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
+                  className="mt-8 min-h-48 w-full resize-none rounded-[1.6rem] border border-black/10 bg-white p-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
                   maxLength={120}
                   onChange={(event) => setSubject(event.target.value)}
                   placeholder={selectedBusiness.value === "marketplace" ? "Например: льняное платье свободного кроя" : "Например: дизайн интерьера квартиры под ключ"}
@@ -213,10 +213,10 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
             {step === 2 && (
               <div data-reveal>
                 <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 3 · аудитория</p>
-                <h1 className="mt-3 text-balance text-4xl font-bold leading-[0.96] tracking-[-0.06em] sm:text-6xl">Кто должен захотеть это?</h1>
+                <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Кто должен захотеть это?</h1>
                 <input
                   autoFocus
-                  className="mt-8 h-16 w-full rounded-[1.4rem] border border-[var(--brand-ink)]/10 bg-[var(--brand-paper)] px-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
+                  className="mt-8 h-16 w-full rounded-[1.4rem] border border-black/10 bg-white px-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
                   maxLength={100}
                   onChange={(event) => setAudience(event.target.value)}
                   placeholder="Например: женщины 25–40 лет, которым важны комфорт и натуральные ткани"
@@ -230,7 +230,7 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
                         "h-12 rounded-xl border px-2 text-xs font-semibold transition sm:text-sm",
                         tone === option.value
                           ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white"
-                          : "border-[var(--brand-ink)]/8 bg-white hover:bg-[var(--brand-lavender)]",
+                          : "border-black/8 bg-white hover:bg-[var(--brand-lavender)]",
                       )}
                       key={option.value}
                       onClick={() => setTone(option.value)}
@@ -254,16 +254,18 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
                 <ArrowLeft className="size-4" /> Назад
               </button>
               {step < 2 ? (
-                <Button className="h-12 rounded-xl px-6" onClick={next} type="button">Продолжить <ArrowRight className="size-4" /></Button>
+                <Button className="h-12 rounded-xl px-6" onClick={next} type="button">
+                  Продолжить <ArrowRight className="size-4" />
+                </Button>
               ) : (
                 <Button className="motion-shimmer h-12 rounded-xl px-6" disabled={isLoading} onClick={generate} type="button">
-                  {isLoading ? <><LoaderCircle className="size-4 animate-spin" /> AI собирает пакет…</> : <><Sparkles className="size-4" /> Создать AI-пакет</>}
+                  {isLoading ? <><LoaderCircle className="size-4 animate-spin" /> AI работает…</> : <><Sparkles className="size-4" /> Создать AI‑пакет</>}
                 </Button>
               )}
             </div>
           </div>
 
-          <p className="mt-5 text-center text-xs leading-5 text-[var(--brand-muted)]">
+          <p className="mt-5 text-center text-xs leading-5 text-white/32">
             Без телефона, e-mail и паспортных данных. Результат сохраняется только в вашем браузере.
           </p>
         </div>
