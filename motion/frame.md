@@ -1,91 +1,71 @@
-# Делопуск — frame.md
+# Делопуск — frame specification
 
-## Composition model
+## Global entrance
 
-The page uses a restrained motion system inspired by frame-based composition: each sequence has an entrance, dwell, transition and resting state. Motion must remain deterministic and legible.
+Motion должен быть одинаковым на всех страницах, чтобы сайт ощущался одной системой.
 
-## Page load / 0–1400 ms
+### Brand mark
 
-### 0–120 ms
+- 0–120 ms: видна исходная мятная точка;
+- 120–680 ms: рисуется фиолетовый маршрут;
+- 680–900 ms: появляется коралловая конечная точка;
+- анимация выполняется один раз при первой отрисовке страницы.
 
-- Background and static layout are immediately visible.
-- No full-page fade from black or white.
+### Hero
 
-### 120–900 ms
+1. eyebrow — 0 ms;
+2. короткий заголовок — 80 ms;
+3. подзаголовок — 160 ms;
+4. действия — 240 ms;
+5. визуальная панель — 320 ms.
 
-- Logo route draws from the mint start point toward the coral endpoint.
-- Coral endpoint arrives in two segments, matching the stepped route.
-- Header remains stable; only the mark animates.
+Reveal: 700 ms, `cubic-bezier(0.22, 1, 0.36, 1)`, максимум 24 px по вертикали и 7 px blur.
 
-### 180–1050 ms
+## Route behavior
 
-- Hero eyebrow, headline, description and actions reveal in reading order.
-- Reveal uses `opacity 0→1`, `translateY 24→0`, `blur 7→0`.
-- Stagger between groups: 80–120 ms.
+### `/`
 
-### 320–1200 ms
+Главная короткая. Motion объясняет три маршрута и две параллельные линии после подачи заявки.
 
-- Hero flow panel enters after the headline.
-- Stage 01 and 02 settle sequentially.
-- The parallel block appears last.
+### `/idea`
 
-## Hero ambient loop / 6400 ms
+Форма и результат разделены. Поля не двигаются во время ввода. После генерации карточки входят последовательно с шагом 90 ms.
 
-- The complete hero panel drifts vertically by no more than 7 px.
-- Document and material progress tracks run simultaneously.
-- Both tracks reset together; there is no continuous marquee or rotating carousel.
-- Loop begins only after the entrance sequence has completed.
+### `/ip`
 
-## Scroll reveal
+Официальная и рабочая линии используют синхронные progress-анимации с задержкой 600 ms между ними. Это показывает параллельность, а не скорость регистрации.
 
-- Intersection threshold: 12%.
-- Root margin: bottom −10%.
-- Each section reveals only once.
-- Default duration: 700 ms.
-- Card stagger: 70–90 ms.
-- No alternating left/right fly-ins.
+### `/materials`
 
-## Brand workshop
+Карточки появляются в порядке чтения. Нет бесконечных каруселей и автоматической смены контента.
 
-### Idle
+### `/guides` и статьи
 
-- Form is static.
-- Example cards remain visible to explain the output before interaction.
+Только scroll reveal. Чтению не мешают фоновые loops и sticky-анимации.
 
-### Generating
+### `/for/[segment]`
 
-- Button receives a single diagonal shimmer.
-- Spinner indicates active work.
-- Existing preview is not removed, preventing layout collapse.
+Использует тот же entrance, что и главная. Меняется контент, но не motion grammar.
 
-### Result
+## Interaction tokens
 
-- Working name and positioning update immediately.
-- Three cards enter with 90 ms stagger.
-- Download controls become visible on hover/focus.
-- Registration CTA appears only after the brand draft exists.
-
-## Parallel journey
-
-- Stage 01: idea and brand.
-- Stage 02: IP application.
-- Stage 03: two simultaneous progress tracks.
-- The document track and material track use the same duration but different semantic colors.
-- The animation must communicate concurrency, not speed or urgency.
-
-## Interaction motion
-
-- Primary buttons rise 3 px on hover.
-- Cards rise 5 px with a softer shadow.
-- Icon rotation is limited to 3 degrees.
-- Arrow movement is limited to 3 px.
-- No cursor-following distortion, elastic text or scroll hijacking.
+- hover lift: 3 px для primary action;
+- card hover lift: 5 px;
+- hover duration: 420 ms;
+- reveal stagger: 70–120 ms;
+- ambient loop: 8–18 s;
+- progress loop: 4.8 s;
+- no bounce;
+- no elastic text;
+- no scroll hijacking;
+- no cursor distortion.
 
 ## Reduced motion
 
-When `prefers-reduced-motion: reduce` is active:
+При `prefers-reduced-motion: reduce`:
 
-- all reveals render immediately;
-- the logo route and endpoint render in their final state;
-- ambient drift and progress loops stop;
-- interaction feedback remains through color and focus states.
+- все элементы сразу отображаются в конечном состоянии;
+- progress-линии статичны;
+- route mark не рисуется, а отображается полностью;
+- hover не меняет положение элементов;
+- скролл остаётся нативным.
