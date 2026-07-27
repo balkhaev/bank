@@ -1,107 +1,59 @@
-# Делопуск — frame.md
+# Делопуск — approved frame sequence
 
-## Composition model
+## Frame 01 — Header and hero
 
-Каждый экран показывает одну стадию конверсионного процесса: обещание AI‑результата, короткий бриф, сборка пакета, демонстрация результата и переход к официальной регистрации ИП.
+- Dark surface from the top edge.
+- Brand at left, restrained navigation in the centre, primary action at right.
+- Editorial headline on the left.
+- Layered AI workspace on the right: task board, product card, campaign poster, copy hook and AI scene strip.
+- Two CTAs only: create AI package and open IP.
 
-Motion должен помогать пользователю увидеть работу AI, а не создавать впечатление декоративной «нейросети».
+### Entrance
 
-## Landing load / 0–1400 ms
+- 0–160 ms: brand and navigation.
+- 120–600 ms: badge, headline and body.
+- 260–760 ms: actions and trust row.
+- 380–980 ms: workspace layers with 70–100 ms stagger.
 
-### 0–120 ms
+## Frame 02 — AI capabilities
 
-- Тёплый фон и статическая сетка видны сразу.
-- Нет общего fade‑in страницы.
+- Light background.
+- Six vertical cards in one desktop row.
+- Four ready modules and two beta modules.
+- Product visuals are part of each card, not generic icons only.
 
-### 120–900 ms
+## Frame 03 — Parallel process
 
-- Рисуется маршрут знака Делопуска.
-- Eyebrow, headline, description и actions раскрываются в порядке чтения.
-- Reveal: `opacity 0→1`, `translateY 24→0`, `blur 7→0`.
+- Dark background.
+- Four stages on one horizontal route.
+- Stage three is active.
+- Two factual progress tracks: partner registration and AI material preparation.
 
-### 320–1200 ms
+## Frame 04 — Deliverables
 
-- AI workspace входит после основного оффера.
-- Сначала появляется product canvas.
-- Затем последовательно активируются SEO и Visual Lab.
-- Модуль модельной примерки появляется последним с видимым статусом `beta`.
+- Light background.
+- Checklist on the left.
+- Detailed AI package dashboard on the right.
+- Example project uses the working name Lumière as demonstration content.
 
-## Workspace loop
+## Frame 05 — Segments
 
-После завершения entrance допускаются только спокойные циклы:
+- Dark background.
+- Four large cards: marketplaces, services, local business and B2B.
+- Each card has a distinct visual surface but the same hierarchy.
 
-- короткая progress‑линия SEO;
-- слабое ambient‑движение общего workspace не более 7 px;
-- редкий мягкий shimmer на основном AI CTA;
-- никакого бесконечного печатания текста, хаотичных частиц или мигающих градиентов.
+## Frame 06 — Final CTA
 
-## Quiz
+- Light outer section.
+- Dark gradient inner panel.
+- Editorial CTA copy on the left.
+- Shield and three trust statements on the right.
 
-### Step transition
+## Mobile
 
-- Текущий вопрос уходит на 12 px вверх с быстрым fade.
-- Следующий вопрос входит с 18 px снизу.
-- Progress меняет ширину за 500 ms.
-- Левая AI‑панель остаётся стабильной, чтобы пользователь постоянно видел ценность результата.
-
-### Generating
-
-- CTA получает один диагональный shimmer.
-- Spinner показывает активный запрос.
-- Текст меняется на `AI собирает пакет…`.
-- Не показывать выдуманные проценты или fake‑progress.
-
-## Result
-
-### 0–900 ms
-
-1. Статус `AI‑пакет готов`.
-2. Рабочее название и позиционирование.
-3. Четыре ready‑модуля.
-4. CTA регистрации ИП.
-
-### Output sequence
-
-- Три карточки входят с интервалом 90 ms.
-- AI‑редактор и Visual Lab появляются следующей группой.
-- Расширенные image‑модули показываются позже и визуально отделены как beta.
-- Банковский CTA не перекрывает персональный результат, но остаётся above the fold.
-
-## Segment prelanding
-
-- Hero сначала показывает конкретный сегментный AI‑результат.
-- Карточки `готово` входят раньше карточки `beta`.
-- CTA `/start?segment=...` получает основной motion emphasis.
-- Прямой банковский CTA остаётся спокойной вторичной альтернативой.
-
-## IP bridge
-
-- Никакого повторного шоу AI‑анимаций.
-- Сохранённые результаты отображаются статично и уверенно.
-- Переход к партнёру подчёркивается цветом и фокусом, а не urgency‑эффектами.
-
-## Scroll reveal
-
-- Intersection threshold: 12%.
-- Root margin: bottom −10%.
-- Каждый элемент раскрывается только один раз.
-- Default duration: 700 ms.
-- Card stagger: 70–90 ms.
-- Нет чередующихся fly‑in слева и справа.
-
-## Interaction motion
-
-- Primary buttons rise: 3 px.
-- Cards rise: 5 px.
-- Arrow travel: не более 3 px.
-- Нет bounce, elastic typography, cursor distortion и scroll hijacking.
-
-## Reduced motion
-
-При `prefers-reduced-motion: reduce`:
-
-- все элементы сразу видны в финальном состоянии;
-- route logo отображается полностью;
-- workspace loops и shimmer отключаются;
-- статус `готово` / `beta` остаётся текстовым и не зависит от анимации;
-- interaction feedback сохраняется через цвет, border и focus ring.
+- Preserve the exact section order.
+- Stack the workspace under the hero actions.
+- Render capability cards as a two-column grid.
+- Convert the timeline to a vertical route.
+- Keep the AI package dashboard as a single stacked card.
+- Keep the final CTA inside the dark inner panel.
