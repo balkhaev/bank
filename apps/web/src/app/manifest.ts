@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Делопуск — запустите дело без паузы",
+    name: "Делопуск — AI-студия запуска",
     short_name: "Делопуск",
-    description: "Персональный старт-пакет и переход к официальной онлайн-регистрации ИП у партнёра.",
+    description: "Карточки, тексты, рекламные хуки и визуальные сценарии для запуска бизнеса.",
     start_url: "/",
     display: "standalone",
     background_color: "#f7f4ee",
