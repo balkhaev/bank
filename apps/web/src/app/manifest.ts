@@ -5,11 +5,11 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Делопуск — запуск бизнеса онлайн",
     short_name: "Делопуск",
     description:
-      "Бесплатный старт-пакет бизнеса и переход к регистрации ИП через Т‑Банк.",
+      "Бесплатный старт-пакет бизнеса и переход к официальной онлайн-регистрации ИП у партнёра.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fbf9f1",
-    theme_color: "#ffdd2d",
+    background_color: "#f7f4ee",
+    theme_color: "#4e46c8",
     icons: [
       {
         src: "/icon.svg",
