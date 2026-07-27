@@ -6,7 +6,6 @@ import {
   Check,
   ChevronDown,
   CircleCheckBig,
-  Clock3,
   FileCheck2,
   Landmark,
   ReceiptText,
@@ -30,13 +29,13 @@ import {
 } from "@bank/ui/components/card";
 import { cn } from "@bank/ui/lib/utils";
 
-const REFERRAL_URL =
-  "https://www.tbank.ru/business/registration-ip/?utm_medium=ptr.act&utm_campaign=sme.partners&partnerId=7-3S8W8HB0O&agentId=5-3AE9QL70H&agentSsoId=38bc4ed4-d23d-4066-b7d6-f57a711497f2&utm_source=partner_rko_a_sme";
+import { AiStartPack } from "@/components/ai-start-pack";
+import { TrackedReferralLink } from "@/components/tracked-referral-link";
 
 const facts = [
   { value: "0 ₽", label: "регистрация" },
   { value: "3–5", label: "рабочих дней" },
-  { value: "2", label: "основных документа" },
+  { value: "3", label: "готовые карточки" },
 ] as const;
 
 const benefits: Array<{
@@ -143,6 +142,16 @@ const faqs = [
       "Услуга регистрации стоит 0 ₽. При электронной подаче через сервис банка госпошлина не требуется. Актуальные условия отображаются на странице Т‑Банка перед оформлением.",
   },
   {
+    question: "Что входит в бесплатный старт-пакет?",
+    answer:
+      "На этой странице можно бесплатно получить черновик позиционирования, три промо-карточки и план первой недели. Карточки скачиваются в SVG и подходят как основа для маркетплейса, соцсетей или лендинга.",
+  },
+  {
+    question: "Нужно оставлять телефон или e‑mail для генерации?",
+    answer:
+      "Нет. Генератор просит только короткое описание продукта или услуги и аудитории. Не вводите паспортные данные, контакты и другую персональную информацию.",
+  },
+  {
     question: "Какие документы понадобятся?",
     answer:
       "Для гражданина России обычно нужны паспорт и СНИЛС. В отдельных ситуациях банк может запросить дополнительные сведения.",
@@ -160,7 +169,7 @@ const faqs = [
   {
     question: "Помогут выбрать ОКВЭД и систему налогообложения?",
     answer:
-      "Сотрудники банка объяснят варианты, помогут подобрать коды деятельности и расскажут о доступных налоговых режимах.",
+      "Сотрудники банка объяснят варианты, помогут подобрать коды деятельности и расскажут о доступных налоговых режимах. AI-генератор на этой странице не заменяет такую консультацию.",
   },
   {
     question: "Это официальный сайт Т‑Банка?",
@@ -168,28 +177,6 @@ const faqs = [
       "Нет. Это партнёрская информационная страница. По кнопке вы переходите на официальный домен tbank.ru, где заполняете заявку и принимаете условия банка.",
   },
 ] as const;
-
-const referralClassName =
-  "inline-flex h-[3.25rem] items-center justify-center gap-2 rounded-2xl bg-[var(--landing-primary)] px-7 text-sm font-semibold text-[var(--landing-primary-foreground)] shadow-[0_16px_36px_-18px_rgba(214,166,0,0.85)] transition hover:-translate-y-0.5 hover:brightness-[0.97] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color-mix(in_oklch,var(--landing-primary),transparent_55%)] active:translate-y-0";
-
-function ReferralLink({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <a
-      className={cn(referralClassName, className)}
-      data-cta="tbank-registration"
-      href={REFERRAL_URL}
-      rel="sponsored nofollow"
-    >
-      {children}
-    </a>
-  );
-}
 
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
@@ -290,7 +277,9 @@ function HeroPanel() {
           </div>
 
           <div className="mt-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-            <Clock3 className="size-5 text-[var(--landing-primary)]" />
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[var(--landing-primary)] text-[10px] font-bold text-[var(--landing-primary)]">
+              3–5
+            </div>
             <div>
               <p className="text-sm font-medium text-white">Ответ ФНС — на e‑mail</p>
               <p className="mt-0.5 text-xs text-white/45">Обычно через 3–5 рабочих дней</p>
@@ -317,13 +306,16 @@ export default function Home() {
     <main className="landing-page overflow-hidden pb-24 sm:pb-0">
       <header className="relative z-30 border-b border-black/6 bg-[var(--landing-background)]/82 backdrop-blur-xl">
         <div className="mx-auto flex h-17 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <a className="flex items-center gap-2.5" href="#top" aria-label="Старт ИП — наверх">
+          <a aria-label="Старт ИП — наверх" className="flex items-center gap-2.5" href="#top">
             <span className="flex size-9 items-center justify-center rounded-xl bg-[var(--landing-primary)] text-sm font-black tracking-[-0.04em] text-black shadow-sm">
               ИП
             </span>
             <span className="font-semibold tracking-[-0.02em]">Старт ИП</span>
           </a>
           <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
+            <a className="transition-colors hover:text-foreground" href="#ai-pack">
+              AI‑старт‑пакет
+            </a>
             <a className="transition-colors hover:text-foreground" href="#benefits">
               Возможности
             </a>
@@ -334,10 +326,13 @@ export default function Home() {
               Вопросы
             </a>
           </nav>
-          <ReferralLink className="h-10 rounded-xl px-4 text-xs shadow-none">
+          <TrackedReferralLink
+            className="h-10 rounded-xl px-4 text-xs shadow-none"
+            placement="header"
+          >
             Открыть ИП
             <ArrowRight className="size-4" />
-          </ReferralLink>
+          </TrackedReferralLink>
         </div>
       </header>
 
@@ -357,16 +352,29 @@ export default function Home() {
               передаст заявку в ФНС и бесплатно откроет расчётный счёт.
             </p>
 
+            <div className="mt-6 flex max-w-2xl items-start gap-3 rounded-2xl border border-black/8 bg-white/75 p-4 shadow-sm backdrop-blur">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--landing-primary)] text-black">
+                <Sparkles className="size-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold">Бонус: бесплатный старт-пакет бизнеса</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  Сгенерируйте три продающие карточки, позиционирование и план первой недели — без телефона и e‑mail.
+                </p>
+              </div>
+            </div>
+
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <ReferralLink className="w-full sm:w-auto">
-                Начать регистрацию
+              <TrackedReferralLink className="w-full sm:w-auto" placement="hero-primary">
+                Открыть ИП за 0 ₽
                 <ArrowRight className="size-5" />
-              </ReferralLink>
+              </TrackedReferralLink>
               <a
-                className="inline-flex h-[3.25rem] w-full items-center justify-center rounded-2xl border border-black/10 bg-white/75 px-7 text-sm font-semibold shadow-sm backdrop-blur transition hover:bg-white sm:w-auto"
-                href="#steps"
+                className="inline-flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-2xl border border-black/10 bg-white/75 px-7 text-sm font-semibold shadow-sm backdrop-blur transition hover:bg-white sm:w-auto"
+                href="#ai-pack"
               >
-                Посмотреть шаги
+                <Sparkles className="size-4" />
+                Получить старт-пакет
               </a>
             </div>
             <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
@@ -391,6 +399,8 @@ export default function Home() {
           <HeroPanel />
         </div>
       </section>
+
+      <AiStartPack />
 
       <section className="border-y border-black/6 bg-white/55 py-20 sm:py-28" id="benefits">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -463,10 +473,13 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <ReferralLink className="mt-6 w-full shrink-0 lg:mt-0 lg:w-auto">
+            <TrackedReferralLink
+              className="mt-6 w-full shrink-0 lg:mt-0 lg:w-auto"
+              placement="steps-banner"
+            >
               Перейти к заявке
               <ArrowRight className="size-4" />
-            </ReferralLink>
+            </TrackedReferralLink>
           </div>
         </div>
       </section>
@@ -483,7 +496,10 @@ export default function Home() {
             {audiences.map((audience) => {
               const Icon = audience.icon;
               return (
-                <Card className="gap-0 rounded-3xl bg-white/85 py-0 text-base ring-black/8" key={audience.title}>
+                <Card
+                  className="gap-0 rounded-3xl bg-white/85 py-0 text-base ring-black/8"
+                  key={audience.title}
+                >
                   <CardHeader className="p-6">
                     <Icon className="size-6" />
                     <CardTitle className="mt-4 text-lg font-semibold tracking-[-0.025em]">
@@ -505,7 +521,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Без мелкого шрифта"
             title="Частые вопросы"
-            description="Короткие ответы о стоимости, документах и процессе регистрации."
+            description="Короткие ответы о стоимости, AI-бонусе, документах и процессе регистрации."
           />
 
           <div className="mt-12 grid gap-3">
@@ -535,16 +551,19 @@ export default function Home() {
               Готовы начать?
             </span>
             <h2 className="mt-5 text-balance text-3xl font-bold tracking-[-0.055em] sm:text-5xl">
-              Оформите ИП без госпошлины и поездок в ФНС
+              Оформите ИП и заберите готовые материалы для старта
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-7 text-black/65 sm:text-lg">
-              Заполните заявку на официальной странице Т‑Банка. Перед отправкой вы увидите актуальные условия сервиса.
+              Перейдите на официальную страницу Т‑Банка. Старт-пакет сохранится в этом браузере, чтобы вы могли вернуться к карточкам и плану.
             </p>
           </div>
-          <ReferralLink className="relative mt-8 w-full bg-[#181817] text-white shadow-none hover:brightness-110 lg:mt-0 lg:w-auto">
+          <TrackedReferralLink
+            className="relative mt-8 w-full bg-[#181817] text-white shadow-none hover:brightness-110 lg:mt-0 lg:w-auto"
+            placement="final-cta"
+          >
             Открыть ИП за 0 ₽
             <ArrowRight className="size-5" />
-          </ReferralLink>
+          </TrackedReferralLink>
         </div>
       </section>
 
@@ -562,22 +581,25 @@ export default function Home() {
                 Партнёрская информационная страница, не официальный сайт Т‑Банка. При переходе по ссылке и оформлении продукта владелец страницы может получить вознаграждение. Банковские услуги предоставляет АО «ТБанк», универсальная лицензия Банка России № 2673. Решение о государственной регистрации принимает ФНС.
               </p>
               <p className="mt-2 leading-6">
-                Условия и доступность сервиса могут измениться. Проверяйте актуальную информацию на сайте Т‑Банка перед отправкой заявки. Эта страница не собирает паспортные данные и не принимает заявки самостоятельно.
+                Условия и доступность сервиса могут измениться. Проверяйте актуальную информацию на сайте Т‑Банка перед отправкой заявки. Эта страница не собирает паспортные данные и не принимает заявки самостоятельно. AI-материалы являются маркетинговыми черновиками.
               </p>
             </div>
-            <ReferralLink className="h-11 shrink-0 rounded-xl bg-white px-5 text-xs text-foreground ring-1 ring-black/10 shadow-none hover:bg-muted">
+            <TrackedReferralLink
+              className="h-11 shrink-0 rounded-xl bg-white px-5 text-xs text-foreground ring-1 ring-black/10 shadow-none hover:bg-muted"
+              placement="footer"
+            >
               На сайт Т‑Банка
               <ArrowRight className="size-4" />
-            </ReferralLink>
+            </TrackedReferralLink>
           </div>
         </div>
       </footer>
 
       <div className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-black/8 bg-[var(--landing-background)]/95 p-2 shadow-2xl backdrop-blur sm:hidden">
-        <ReferralLink className="w-full">
+        <TrackedReferralLink className="w-full" placement="mobile-sticky">
           Открыть ИП за 0 ₽
           <ArrowRight className="size-5" />
-        </ReferralLink>
+        </TrackedReferralLink>
       </div>
     </main>
   );
