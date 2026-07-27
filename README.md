@@ -1,79 +1,69 @@
 # Делопуск
 
-`delopusk.ru` — партнёрский landing page для онлайн-регистрации ИП через Т‑Банк с бесплатным AI-старт-пакетом бизнеса.
+`delopusk.ru` — независимый сервис для запуска малого бизнеса: идея и рабочий бренд, переход к онлайн-регистрации ИП у партнёра и подготовка материалов параллельно с оформлением.
 
-Проект создан на [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), современном TypeScript-стеке на Next.js, Hono, tRPC и общих shadcn/ui-компонентах.
+Проект создан на Better-T-Stack: Next.js, TypeScript, Tailwind CSS и общие shadcn/ui-компоненты.
 
 ## Product
 
 - Бренд: **Делопуск**
+- Слоган: **Дело начинается здесь.**
 - Production domain: **https://delopusk.ru**
-- Основной CTA: регистрация ИП на официальной странице Т‑Банка
-- Лид-магнит: позиционирование, три промо-карточки и план первой недели
+- Основной маршрут: идея и бренд → заявка на ИП → параллельная подготовка материалов
 - Страница не собирает паспортные данные и не принимает банковскую заявку самостоятельно
 
-## Features
+## Routes
 
-- **TypeScript** — type safety and developer experience
-- **Next.js** — web application and metadata routes
-- **TailwindCSS** — utility-first styling
-- **Shared UI package** — shadcn/ui primitives in `packages/ui`
-- **Hono + tRPC** — API layer
-- **Bun** — runtime and package manager
-- **Drizzle + PostgreSQL** — data layer available in the monorepo
-- **Better Auth** — authentication package available in the stack
-- **Turborepo** — monorepo orchestration
-- **Biome / Ultracite** — linting and formatting
+```text
+/                         Главная
+/idea                     Мастерская идеи и бренда
+/ip                       Онлайн-регистрация ИП
+/materials                Материалы запуска
+/guides                   База знаний
+/guides/[slug]            Статья
+/for/marketplace          Сценарий для маркетплейсов
+/for/services             Сценарий для услуг
+/for/local                Сценарий для локального бизнеса
+/for/b2b                  Сценарий для B2B
+```
 
-## Getting Started
-
-Install dependencies:
+## Local development
 
 ```bash
 bun install
-```
-
-Copy the web environment template:
-
-```bash
 cp apps/web/.env.example apps/web/.env
-```
-
-Start the web application:
-
-```bash
 bun run dev:web
 ```
 
-Open [http://localhost:3001](http://localhost:3001).
+Web application: [http://localhost:3001](http://localhost:3001).
 
-## AI start pack
+## AI brand workshop
 
-- `OPENAI_API_KEY` enables generated positioning, launch checklists, and promo cards through the Responses API.
-- `OPENAI_MODEL` defaults to `gpt-5.6-luna`.
-- Without an API key, the endpoint returns deterministic templates so the landing remains usable.
-- Input and output are validated.
-- Requests use `store: false`.
-- A basic per-IP rate limit protects the endpoint.
-- The UI asks visitors not to enter personal or passport data.
+- `OPENAI_API_KEY` включает генерацию рабочего названия, позиционирования, чек-листа и промо-карточек через Responses API.
+- `OPENAI_MODEL` по умолчанию — `gpt-5.6-luna`.
+- Без API-ключа endpoint возвращает детерминированные шаблоны.
+- Вход и результат валидируются.
+- Запросы используют `store: false`.
+- Действует базовый rate limit по IP.
+- Интерфейс просит не вводить контакты и паспортные данные.
 
 ## Analytics
 
-`NEXT_PUBLIC_YANDEX_METRICA_ID` enables the optional Yandex Metrica counter.
+`NEXT_PUBLIC_YANDEX_METRICA_ID` включает счётчик Яндекс Метрики.
 
-Tracked events include:
+Основные события:
 
 ```text
 tbank_registration_click
-start_pack_generated
-start_pack_card_download
+brand_draft_generated
+brand_card_download
 ```
 
-Referral CTA events contain their placement, for example `hero-primary`, `ai-pack-result`, `final-cta`, and `mobile-sticky`.
+Партнёрские CTA передают placement, например `header`, `ip-hero`, `brand-workshop-result`, `final-cta` и `footer`.
 
-## SEO and domain
+## SEO
 
-The Next.js metadata configuration uses `https://delopusk.ru` as the canonical origin. The app also includes:
+Next.js metadata использует `https://delopusk.ru` как canonical origin. В проект входят:
 
 ```text
 /robots.txt
@@ -82,80 +72,54 @@ The Next.js metadata configuration uses `https://delopusk.ru` as the canonical o
 /icon.svg
 ```
 
-Before production deployment, point the domain to the hosting platform and confirm HTTPS, redirects from `www`, and Yandex Webmaster ownership.
+Sitemap содержит продуктовые, сегментные и статейные страницы.
 
-## Database Setup
+## Motion
 
-The full monorepo includes PostgreSQL with Drizzle ORM.
+Motion-спецификации находятся в:
 
-1. Configure `apps/server/.env`.
-2. Start PostgreSQL or use an existing database.
-3. Apply the schema:
-
-```bash
-bun run db:push
+```text
+motion/design.md
+motion/frame.md
 ```
 
-## UI Customization
+Принципы:
 
-React web apps share shadcn/ui primitives through `packages/ui`.
+- motion объясняет последовательность и параллельность;
+- scroll reveal выполняется один раз;
+- логотип рисуется как маршрут;
+- hover ограничен подъёмом 3–5 px;
+- фон использует только медленный ambient drift;
+- `prefers-reduced-motion` отображает финальное состояние без анимации.
 
-- Landing styles: `apps/web/src/index.css`
-- Landing page: `apps/web/src/app/page.tsx`
-- AI generator: `apps/web/src/components/ai-start-pack.tsx`
-- Shared tokens: `packages/ui/src/styles/globals.css`
-- Shared primitives: `packages/ui/src/components/*`
+## UI structure
 
-Add shared components from the repository root:
-
-```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+```text
+apps/web/src/app/page.tsx                    Главная
+apps/web/src/app/idea/page.tsx               Идея и бренд
+apps/web/src/app/ip/page.tsx                 Регистрация ИП
+apps/web/src/app/materials/page.tsx          Материалы запуска
+apps/web/src/app/guides/**                   Гайды
+apps/web/src/app/for/[segment]/page.tsx      Сегментные страницы
+apps/web/src/components/site-shell.tsx       Общие header/footer/brand mark
+apps/web/src/components/brand-workshop.tsx   Генератор бренда
+apps/web/src/components/motion-orchestrator.tsx Scroll reveal
+apps/web/src/index.css                       Токены и motion CSS
 ```
 
-Import shared components like this:
+## Checks
 
-```tsx
-import { Button } from "@bank/ui/components/button";
+```bash
+bun run check
+bun run check-types
+bun run build
 ```
 
 ## Deployment
 
-### Docker Compose
-
-- Build: `bun run docker:build`
-- Start: `bun run docker:up`
-- Logs: `bun run docker:logs`
-- Stop: `bun run docker:down`
-
-Environment variables are read from app-level `.env` files and can be overridden in `docker-compose.yml`.
-
-## Project Structure
-
-```text
-bank/
-├── apps/
-│   ├── web/         # Делопуск landing and AI start pack
-│   └── server/      # Hono / tRPC API
-├── packages/
-│   ├── ui/          # Shared shadcn/ui components
-│   ├── api/         # API layer
-│   ├── auth/        # Better Auth configuration
-│   └── db/          # Drizzle schema and queries
+```bash
+bun run docker:build
+bun run docker:up
+bun run docker:logs
+bun run docker:down
 ```
-
-## Available Scripts
-
-- `bun run dev`: start all applications
-- `bun run build`: build all applications
-- `bun run dev:web`: start only the web application
-- `bun run dev:server`: start only the API server
-- `bun run check-types`: run TypeScript checks
-- `bun run db:push`: push the database schema
-- `bun run db:generate`: generate database artifacts
-- `bun run db:migrate`: run migrations
-- `bun run db:studio`: open database studio
-- `bun run check`: run formatting and linting checks
-- `bun run docker:build`: build Docker images
-- `bun run docker:up`: start Docker Compose
-- `bun run docker:down`: stop Docker Compose
-- `bun run docker:logs`: tail Docker logs
