@@ -1,10 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import { Geologica } from "next/font/google";
 
 import "../index.css";
 import { Analytics } from "@/components/analytics";
 import Providers from "@/components/providers";
 
 const siteUrl = "https://delopusk.ru";
+const geologica = Geologica({
+  subsets: ["cyrillic", "latin"],
+  variable: "--font-geologica",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -68,7 +73,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className={`${geologica.variable} antialiased`}>
         <Providers>{children}</Providers>
         <Analytics />
       </body>
