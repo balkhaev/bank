@@ -11,10 +11,14 @@ export type GeneratedCard = {
 };
 
 export type FunnelPack = {
+  adHooks: [string, string, string];
   cards: [GeneratedCard, GeneratedCard, GeneratedCard];
   checklist: [string, string, string, string, string];
+  listingDescription: string;
+  listingTitle: string;
   positioning: string;
   projectName: string;
+  visualBriefs: [string, string, string];
 };
 
 export type FunnelResult = {
@@ -31,7 +35,7 @@ export const businessOptions: Array<{
   label: string;
   value: BusinessType;
 }> = [
-  { value: "marketplace", label: "Маркетплейс", description: "Товар или собственный бренд" },
+  { value: "marketplace", label: "Маркетплейс", description: "Товар, одежда или собственный бренд" },
   { value: "services", label: "Услуги", description: "Эксперт, мастер или агентство" },
   { value: "local", label: "Локальный бизнес", description: "Студия, точка или мастерская" },
   { value: "b2b", label: "B2B", description: "Продукт или сервис для компаний" },
