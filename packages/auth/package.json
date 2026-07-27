@@ -1,0 +1,24 @@
+{
+  "name": "@bank/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@bank/db": "workspace:*",
+    "@bank/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@bank/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
