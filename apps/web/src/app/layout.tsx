@@ -14,14 +14,12 @@ const geologica = Geologica({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Делопуск — идея, бренд и открытие ИП без паузы",
+    default: "Делопуск — дело начинается здесь",
     template: "%s · Делопуск",
   },
   description:
-    "Сформируйте идею и рабочий бренд, подайте заявку на ИП и готовьте карточки, оффер и план запуска параллельно, пока идёт регистрация.",
-  alternates: {
-    canonical: "/",
-  },
+    "Сформируйте идею и бренд, подайте заявку на ИП, а пока идёт регистрация — подготовьте материалы для запуска.",
+  alternates: { canonical: "/" },
   applicationName: "Делопуск",
   category: "business",
   creator: "Делопуск",
@@ -39,15 +37,15 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: siteUrl,
     siteName: "Делопуск",
-    title: "Делопуск — идея, ИП и материалы без потерянного времени",
+    title: "Делопуск — дело начинается здесь",
     description:
-      "Сначала сформируйте идею и бренд, затем подайте заявку на ИП и готовьте материалы параллельно с регистрацией.",
+      "Идея и бренд, заявка на ИП и параллельная подготовка материалов для запуска.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Делопуск — запуск бизнеса без паузы",
+    title: "Делопуск — дело начинается здесь",
     description:
-      "Рабочий бренд, заявка на ИП и подготовка материалов в одном понятном маршруте.",
+      "Сформируйте идею, откройте ИП и готовьте материалы без потерянного времени.",
   },
   robots: {
     follow: true,
@@ -67,11 +65,7 @@ export const viewport: Viewport = {
   themeColor: "#4e46c8",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
       <body className={`${geologica.variable} antialiased`}>
