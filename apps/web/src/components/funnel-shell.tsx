@@ -15,7 +15,7 @@ export function FunnelShell({ children, step }: { children: ReactNode; step?: st
             <span>
               <span className="block text-sm font-bold tracking-[-0.025em]">Делопуск</span>
               <span className="block text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--brand-muted)]">
-                запуск бизнеса
+                AI‑студия запуска
               </span>
             </span>
           </Link>
@@ -28,7 +28,7 @@ export function FunnelShell({ children, step }: { children: ReactNode; step?: st
       </header>
       {children}
       <footer className="border-t border-[var(--brand-ink)]/6 px-4 py-7 text-center text-xs leading-5 text-[var(--brand-muted)] sm:px-6">
-        Делопуск не является банком и не принимает паспортные данные. Официальная заявка открывается отдельно на сайте партнёра.
+        Делопуск создаёт маркетинговые черновики и не является банком. Паспортные данные вводятся только на официальном сайте партнёра.
       </footer>
     </main>
   );
