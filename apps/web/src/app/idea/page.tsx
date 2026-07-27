@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, FileCheck2, Sparkles } from "lucide-react";
 
-import { AiStartPack } from "@/components/ai-start-pack";
+import { BrandWorkshop } from "@/components/brand-workshop";
 import { SiteShell } from "@/components/site-shell";
 import { TrackedReferralLink } from "@/components/tracked-referral-link";
 
@@ -28,7 +28,7 @@ export default function IdeaPage() {
         </div>
       </section>
 
-      <AiStartPack />
+      <BrandWorkshop />
 
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
