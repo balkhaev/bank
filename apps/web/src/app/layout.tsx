@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geologica } from "next/font/google";
+import { Geologica, Lora } from "next/font/google";
 
 import "../index.css";
 import { Analytics } from "@/components/analytics";
@@ -7,12 +7,13 @@ import Providers from "@/components/providers";
 
 const siteUrl = "https://delopusk.ru";
 const geologica = Geologica({ subsets: ["cyrillic", "latin"], variable: "--font-geologica" });
+const lora = Lora({ subsets: ["cyrillic", "latin"], variable: "--font-lora" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "Делопуск — ваша AI-команда для запуска", template: "%s · Делопуск" },
   description:
-    "AI создаст название, карточки товара, тексты каталога, рекламные хуки и визуальные сценарии. После результата можно открыть ИП за 0 ₽ у партнёра.",
+    "AI создаст название, карточки товара, тексты каталога, рекламные крючки и визуальные сценарии. После результата можно открыть ИП за 0 ₽ у партнёра.",
   alternates: { canonical: "/" },
   applicationName: "Делопуск",
   category: "business",
@@ -52,12 +53,12 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { colorScheme: "light dark", themeColor: "#0b0a12" };
+export const viewport: Viewport = { colorScheme: "dark light", themeColor: "#090812" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className={`${geologica.variable} antialiased`}>
+      <body className={`${geologica.variable} ${lora.variable} antialiased`}>
         <Providers>{children}</Providers>
         <Analytics />
       </body>
