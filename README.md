@@ -127,7 +127,7 @@ bank/
 - `bun run db:push`: Push schema changes to database
 - `bun run db:generate`: Generate database client/types
 - `bun run db:migrate`: Run database migrations
-- `bun run db:studio`: Generate database client/types
+- `bun run db:studio`: Open database studio
 - `bun run check`: Run Biome formatting and linting
 - `bun run docker:build`: Build the Docker Compose images
 - `bun run docker:up`: Build and start the Docker Compose stack
