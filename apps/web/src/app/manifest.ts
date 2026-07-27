@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Карточки, тексты, рекламные хуки и визуальные сценарии для запуска бизнеса.",
     start_url: "/",
     display: "standalone",
-    background_color: "#0b0a12",
-    theme_color: "#0b0a12",
+    background_color: "#090812",
+    theme_color: "#090812",
     icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }],
   };
 }
