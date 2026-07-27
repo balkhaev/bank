@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowRight, ScanFace, Sparkles, WandSparkles } from "lucide-react";
 import { notFound } from "next/navigation";
 
-import { primaryLinkClassName, SiteShell } from "@/components/site-shell";
+import { FunnelShell } from "@/components/funnel-shell";
 import { TrackedReferralLink } from "@/components/tracked-referral-link";
 import { segments, type SegmentSlug } from "@/lib/site-content";
 
@@ -23,64 +23,92 @@ export default async function SegmentPage({ params }: { params: Promise<{ segmen
   const data = segments[segment as SegmentSlug];
   if (!data) notFound();
 
+  const isMarketplace = segment === "marketplace";
+
   return (
-    <SiteShell>
-      <section className="relative py-20 sm:py-28">
-        <div className="brand-grid pointer-events-none absolute inset-0 -z-10 opacity-30" />
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_0.85fr] lg:items-center lg:px-8">
+    <FunnelShell step="AI‑студия">
+      <section className="relative overflow-hidden py-16 sm:py-24">
+        <div className="brand-grid pointer-events-none absolute inset-0 -z-10 opacity-22" />
+        <div className="motion-orb pointer-events-none absolute -left-40 top-16 -z-10 size-[32rem] rounded-full bg-[var(--brand-primary)]/12 blur-3xl" />
+
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-8">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]" data-reveal>{data.eyebrow}</p>
-            <h1 className="mt-6 text-balance text-[clamp(3.8rem,8vw,7rem)] font-bold leading-[0.88] tracking-[-0.08em]" data-reveal data-reveal-delay="80">{data.title}</h1>
+            <p className="inline-flex items-center gap-2 rounded-full border border-[var(--brand-ink)]/8 bg-white/75 px-3.5 py-2 text-xs font-semibold" data-reveal>
+              <Sparkles className="size-4 text-[var(--brand-primary)]" /> {data.eyebrow}
+            </p>
+            <h1 className="mt-7 text-balance text-[clamp(3.7rem,7vw,6.8rem)] font-bold leading-[0.88] tracking-[-0.08em]" data-reveal data-reveal-delay="80">{data.title}</h1>
             <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-[var(--brand-muted)] sm:text-xl" data-reveal data-reveal-delay="160">{data.description}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row" data-reveal data-reveal-delay="240">
-              <Link className={`${primaryLinkClassName} w-full sm:w-auto`} href={`/start?segment=${segment}`}>
-                Получить старт-пакет <Sparkles className="size-4" />
+              <Link className="brand-primary-action inline-flex h-[3.25rem] items-center justify-center gap-2 rounded-2xl bg-[var(--brand-primary)] px-7 text-sm font-semibold text-white" href={`/start?segment=${segment}`}>
+                Создать AI‑пакет <WandSparkles className="size-4" />
               </Link>
-              <TrackedReferralLink className="w-full border border-[var(--brand-ink)]/10 bg-white text-[var(--brand-ink)] shadow-sm sm:w-auto" placement={`segment-${segment}-direct`}>
+              <TrackedReferralLink className="border border-[var(--brand-ink)]/10 bg-white text-[var(--brand-ink)] shadow-sm" placement={`segment-${segment}-direct`}>
                 Сразу открыть ИП <ArrowRight className="size-4" />
               </TrackedReferralLink>
             </div>
-            <p className="mt-5 text-xs leading-5 text-[var(--brand-muted)]">Три вопроса. Без телефона и регистрации на Делопуске.</p>
+            <p className="mt-5 text-xs leading-5 text-[var(--brand-muted)]">Без телефона и e-mail. Результат появляется до перехода к партнёру.</p>
           </div>
 
-          <div className="rounded-[2.5rem] bg-[var(--brand-lavender)] p-7" data-reveal data-reveal-delay="300">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--brand-primary)]">персональный результат</p>
-            <h2 className="mt-4 text-3xl font-bold tracking-[-0.05em]">Что будет готово</h2>
-            <ul className="mt-7 grid gap-4">
-              {data.benefits.map((benefit) => (
-                <li className="flex gap-3 rounded-[1.35rem] bg-white/75 p-4 text-sm font-semibold" key={benefit}>
-                  <Check className="size-5 shrink-0 text-[var(--brand-primary)]" />{benefit}
-                </li>
+          <div className="rounded-[2.7rem] bg-[var(--brand-ink)] p-5 text-white shadow-[0_55px_130px_-82px_rgba(21,22,35,0.9)]" data-reveal data-reveal-delay="300">
+            <div className="flex items-center justify-between gap-4 px-2 pb-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--brand-mint)]">ваша AI‑команда</p>
+                <h2 className="mt-2 text-2xl font-bold tracking-[-0.04em]">Что будет готово</h2>
+              </div>
+              <span className="flex size-12 items-center justify-center rounded-2xl bg-[var(--brand-primary)]"><Sparkles className="size-5" /></span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {data.benefits.map((benefit, index) => (
+                <div className="min-h-36 rounded-[1.55rem] border border-white/8 bg-white/[0.055] p-4" key={benefit}>
+                  <span className="flex size-9 items-center justify-center rounded-xl bg-white text-xs font-bold text-[var(--brand-ink)]">0{index + 1}</span>
+                  <p className="mt-8 text-sm font-semibold leading-6">{benefit}</p>
+                </div>
               ))}
-            </ul>
+            </div>
+            {isMarketplace && (
+              <div className="mt-3 flex items-center gap-4 rounded-[1.55rem] bg-[var(--brand-coral)] p-4">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[var(--brand-coral-strong)]"><ScanFace className="size-5" /></span>
+                <div>
+                  <p className="text-sm font-semibold">Для одежды — модельная примерка</p>
+                  <p className="mt-1 text-xs leading-5 text-white/65">В базовом пакете создаём сценарий. Генерация финального изображения отмечена как beta.</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="border-y border-[var(--brand-ink)]/6 bg-white/62 py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="border-y border-[var(--brand-ink)]/6 bg-white/65 py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center" data-reveal>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]">одна воронка</p>
-            <h2 className="mt-5 text-balance text-4xl font-bold leading-[0.96] tracking-[-0.06em] sm:text-6xl">Результат до банковской заявки.</h2>
-            <p className="mt-5 text-lg leading-8 text-[var(--brand-muted)]">Сначала пользователь видит полезный персональный результат. Затем получает один понятный следующий шаг — открыть ИП.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]">три шага</p>
+            <h2 className="mt-5 text-balance text-4xl font-bold leading-[0.96] tracking-[-0.06em] sm:text-6xl">AI сначала показывает результат.</h2>
           </div>
           <div className="mt-12 grid gap-4 lg:grid-cols-3">
             {[
-              ["01", "Ответить на вопросы"],
-              ["02", "Увидеть старт-пакет"],
-              ["03", "Перейти к регистрации"],
-            ].map(([number, title]) => (
-              <article className="rounded-[2rem] border border-[var(--brand-ink)]/8 bg-white p-6" data-reveal key={number}>
-                <span className="text-sm font-bold text-[var(--brand-primary)]">{number}</span>
-                <h3 className="mt-10 text-2xl font-bold leading-[1.02] tracking-[-0.04em]">{title}</h3>
+              ["01", "Короткий бриф", "Три вопроса о продукте и аудитории."],
+              ["02", "AI‑пакет", "Карточки, тексты, визуальные сценарии и рекламные хуки."],
+              ["03", "Открытие ИП", "Официальная заявка становится естественным следующим шагом."],
+            ].map(([number, title, description], index) => (
+              <article className={`rounded-[2rem] border border-[var(--brand-ink)]/8 p-6 ${index === 0 ? "bg-[var(--brand-lavender)]" : index === 1 ? "bg-[var(--brand-ink)] text-white" : "bg-[var(--brand-mint)]"}`} data-reveal data-reveal-delay={String(index * 80)} key={title}>
+                <span className="text-xs font-bold opacity-55">{number}</span>
+                <h3 className="mt-16 text-3xl font-bold tracking-[-0.05em]">{title}</h3>
+                <p className="mt-4 text-sm leading-7 opacity-60">{description}</p>
               </article>
             ))}
           </div>
-          <div className="mt-10 text-center">
-            <Link className={primaryLinkClassName} href={`/start?segment=${segment}`}>Начать <ArrowRight className="size-4" /></Link>
+
+          <div className="mt-12 flex flex-col items-center justify-between gap-6 rounded-[2.4rem] bg-[var(--brand-primary)] p-7 text-white sm:flex-row sm:p-10" data-reveal>
+            <div>
+              <h2 className="text-3xl font-bold tracking-[-0.05em]">Посмотрите, что AI сделает именно для вас.</h2>
+              <p className="mt-3 text-sm leading-7 text-white/60">Без загрузки документов и контактной формы.</p>
+            </div>
+            <Link className="inline-flex h-13 shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-7 text-sm font-semibold text-[var(--brand-primary)]" href={`/start?segment=${segment}`}>
+              Начать <ArrowRight className="size-4" />
+            </Link>
           </div>
         </div>
       </section>
-    </SiteShell>
+    </FunnelShell>
   );
 }
