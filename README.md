@@ -47,6 +47,17 @@ bun run dev
 Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
 The API is running at [http://localhost:3000](http://localhost:3000).
 
+## Landing AI start pack
+
+Copy `apps/web/.env.example` to `apps/web/.env`.
+
+- `OPENAI_API_KEY` enables generated positioning, launch checklists, and promo cards through the Responses API.
+- `OPENAI_MODEL` defaults to `gpt-5.6-luna`.
+- Without an API key, the endpoint returns deterministic templates so the landing remains fully usable.
+- `NEXT_PUBLIC_YANDEX_METRICA_ID` installs the optional Metrica counter and enables the `tbank_registration_click` goal.
+
+The start-pack endpoint validates all input and output, does not store generation requests in OpenAI, and applies a basic per-IP rate limit. The UI tells visitors not to enter personal information.
+
 ## UI Customization
 
 React web apps in this stack share shadcn/ui primitives through `packages/ui`.
@@ -116,9 +127,9 @@ bank/
 - `bun run db:push`: Push schema changes to database
 - `bun run db:generate`: Generate database client/types
 - `bun run db:migrate`: Run database migrations
-- `bun run db:studio`: Open database studio UI
+- `bun run db:studio`: Generate database client/types
 - `bun run check`: Run Biome formatting and linting
 - `bun run docker:build`: Build the Docker Compose images
 - `bun run docker:up`: Build and start the Docker Compose stack
-- `bun run docker:logs`: Tail logs from the Docker Compose stack
 - `bun run docker:down`: Stop the Docker Compose stack
+- `bun run docker:logs`: Tail logs from the Docker Compose stack
