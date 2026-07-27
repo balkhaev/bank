@@ -56,7 +56,7 @@ Copy `apps/web/.env.example` to `apps/web/.env`.
 - Without an API key, the endpoint returns deterministic templates so the landing remains fully usable.
 - `NEXT_PUBLIC_YANDEX_METRICA_ID` installs the optional Metrica counter and enables the `tbank_registration_click` goal.
 
-The start-pack endpoint validates all input and output, does not store generation requests in OpenAI, and applies a basic per-IP rate limit. The UI tells visitors not to enter personal information.
+The start-pack endpoint validates all input and output, sends `store: false` to the Responses API, and applies a basic per-IP rate limit. The UI tells visitors not to enter personal information.
 
 ## UI Customization
 
