@@ -40,6 +40,7 @@ body {
   --ring: var(--brand-primary);
 
   min-height: 100vh;
+  font-family: var(--font-geologica), "Inter", sans-serif;
   background:
     radial-gradient(circle at 4% 2%, rgba(78, 70, 200, 0.12), transparent 30rem),
     radial-gradient(circle at 92% 4%, rgba(255, 107, 74, 0.11), transparent 28rem),
