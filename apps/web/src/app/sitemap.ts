@@ -2,13 +2,8 @@ import type { MetadataRoute } from "next";
 
 const routes = [
   "",
-  "/idea",
+  "/start",
   "/ip",
-  "/materials",
-  "/guides",
-  "/guides/idea-and-brand",
-  "/guides/open-ip",
-  "/guides/first-materials",
   "/for/marketplace",
   "/for/services",
   "/for/local",
@@ -21,6 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `https://delopusk.ru${route}`,
     lastModified,
     changeFrequency: index === 0 ? "weekly" : "monthly",
-    priority: index === 0 ? 1 : route.startsWith("/guides/") ? 0.65 : 0.8,
+    priority: index === 0 ? 1 : route === "/start" || route === "/ip" ? 0.9 : 0.8,
   }));
 }
