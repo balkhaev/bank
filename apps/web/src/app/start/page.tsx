@@ -5,8 +5,8 @@ import { FunnelShell } from "@/components/funnel-shell";
 import type { BusinessType } from "@/lib/funnel";
 
 export const metadata: Metadata = {
-  title: "Получить старт-пакет",
-  description: "Три вопроса — и персональный старт-пакет для запуска бизнеса готов.",
+  title: "Создать AI-пакет",
+  description: "Три вопроса — и AI подготовит карточки, тексты, рекламные хуки и визуальные сценарии.",
   alternates: { canonical: "/start" },
 };
 
@@ -23,7 +23,7 @@ export default async function StartPage({
     : "marketplace";
 
   return (
-    <FunnelShell step="Старт-пакет · 3 шага">
+    <FunnelShell step="AI‑пакет · 3 шага">
       <FunnelQuiz initialSegment={initialSegment} />
     </FunnelShell>
   );
