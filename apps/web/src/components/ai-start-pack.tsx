@@ -11,7 +11,6 @@ import {
   RotateCcw,
   Sparkles,
   Store,
-  WandSparkles,
   Wrench,
   type LucideIcon,
 } from "lucide-react";
@@ -123,11 +122,12 @@ const samplePack: LaunchPack = {
     "Рассчитать стартовую цену",
     "Открыть ИП для официальных продаж",
   ],
-  positioning: "Органайзеры для путешественников, которым важны порядок, скорость сборов и компактность.",
+  positioning:
+    "Органайзеры для путешественников, которым важны порядок, скорость сборов и компактность.",
   projectName: "Порядок в пути",
 };
 
-const themeStyles: Record<
+const cardStyles: Record<
   CardTheme,
   {
     accent: string;
@@ -138,56 +138,59 @@ const themeStyles: Record<
     text: string;
   }
 > = {
+  sun: {
+    accent: "bg-[var(--brand-ink)] text-white",
+    background: "bg-[var(--brand-coral)]",
+    border: "border-[var(--brand-ink)]/8",
+    button: "bg-[var(--brand-ink)] text-white",
+    muted: "text-white/70",
+    text: "text-white",
+  },
   ink: {
-    accent: "bg-[var(--landing-primary)] text-black",
-    background: "bg-[#181817]",
-    border: "border-white/10",
-    button: "bg-white text-black",
-    muted: "text-white/55",
+    accent: "bg-[var(--brand-mint)] text-[var(--brand-ink)]",
+    background: "bg-[var(--brand-primary)]",
+    border: "border-white/12",
+    button: "bg-white text-[var(--brand-primary)]",
+    muted: "text-white/65",
     text: "text-white",
   },
   paper: {
-    accent: "bg-black text-white",
-    background: "bg-white",
-    border: "border-black/10",
-    button: "bg-[#181817] text-white",
-    muted: "text-black/55",
-    text: "text-black",
-  },
-  sun: {
-    accent: "bg-black text-white",
-    background: "bg-[var(--landing-primary)]",
-    border: "border-black/10",
-    button: "bg-[#181817] text-white",
-    muted: "text-black/60",
-    text: "text-black",
+    accent: "bg-[var(--brand-primary)] text-white",
+    background: "bg-[var(--brand-mint)]",
+    border: "border-[var(--brand-ink)]/8",
+    button: "bg-[var(--brand-primary)] text-white",
+    muted: "text-[var(--brand-ink)]/55",
+    text: "text-[var(--brand-ink)]",
   },
 };
 
 const svgPalettes: Record<
   CardTheme,
-  { accent: string; background: string; button: string; muted: string; text: string }
+  { accent: string; background: string; button: string; buttonText: string; muted: string; text: string }
 > = {
+  sun: {
+    accent: "#151623",
+    background: "#ff6b4a",
+    button: "#151623",
+    buttonText: "#ffffff",
+    muted: "#ffe7df",
+    text: "#ffffff",
+  },
   ink: {
-    accent: "#ffdd2d",
-    background: "#181817",
+    accent: "#c9f3db",
+    background: "#4e46c8",
     button: "#ffffff",
-    muted: "#9f9f9a",
+    buttonText: "#4e46c8",
+    muted: "#d9d6ff",
     text: "#ffffff",
   },
   paper: {
-    accent: "#181817",
-    background: "#ffffff",
-    button: "#181817",
-    muted: "#73736e",
-    text: "#181817",
-  },
-  sun: {
-    accent: "#181817",
-    background: "#ffdd2d",
-    button: "#181817",
-    muted: "#5f551b",
-    text: "#181817",
+    accent: "#4e46c8",
+    background: "#c9f3db",
+    button: "#4e46c8",
+    buttonText: "#ffffff",
+    muted: "#557062",
+    text: "#151623",
   },
 };
 
@@ -237,22 +240,22 @@ function buildCardSvg(card: GeneratedCard, projectName: string) {
   const titleSvg = titleLines
     .map(
       (line, index) =>
-        `<text x="80" y="${280 + index * 88}" fill="${palette.text}" font-family="Arial, sans-serif" font-size="76" font-weight="700">${escapeXml(line)}</text>`,
+        `<text x="80" y="${285 + index * 88}" fill="${palette.text}" font-family="Arial, sans-serif" font-size="76" font-weight="700">${escapeXml(line)}</text>`,
     )
     .join("");
-  const subtitleStart = 330 + titleLines.length * 88;
+  const subtitleStart = 340 + titleLines.length * 88;
   const subtitleSvg = subtitleLines
     .map(
       (line, index) =>
-        `<text x="80" y="${subtitleStart + index * 48}" fill="${palette.muted}" font-family="Arial, sans-serif" font-size="34" font-weight="400">${escapeXml(line)}</text>`,
+        `<text x="80" y="${subtitleStart + index * 48}" fill="${palette.muted}" font-family="Arial, sans-serif" font-size="34">${escapeXml(line)}</text>`,
     )
     .join("");
-  const bulletsStart = subtitleStart + subtitleLines.length * 48 + 78;
+  const bulletsStart = subtitleStart + subtitleLines.length * 48 + 90;
   const bulletSvg = card.bullets
     .map(
       (bullet, index) => `
         <circle cx="98" cy="${bulletsStart + index * 82 - 11}" r="18" fill="${palette.accent}" />
-        <path d="M89 ${bulletsStart + index * 82 - 11}l7 7 13-15" fill="none" stroke="${card.theme === "ink" ? "#181817" : "#ffffff"}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M89 ${bulletsStart + index * 82 - 11}l7 7 13-15" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
         <text x="140" y="${bulletsStart + index * 82}" fill="${palette.text}" font-family="Arial, sans-serif" font-size="34" font-weight="600">${escapeXml(bullet)}</text>
       `,
     )
@@ -260,14 +263,15 @@ function buildCardSvg(card: GeneratedCard, projectName: string) {
 
   return `
     <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
-      <rect width="1080" height="1350" rx="64" fill="${palette.background}" />
+      <rect width="1080" height="1350" rx="72" fill="${palette.background}" />
+      <circle cx="995" cy="85" r="150" fill="none" stroke="${palette.text}" stroke-opacity="0.08" stroke-width="40" />
       <rect x="80" y="74" width="${Math.min(450, 170 + projectName.length * 13)}" height="62" rx="31" fill="${palette.accent}" />
-      <text x="112" y="116" fill="${card.theme === "ink" ? "#181817" : "#ffffff"}" font-family="Arial, sans-serif" font-size="26" font-weight="700">${escapeXml(projectName)}</text>
+      <text x="112" y="116" fill="#ffffff" font-family="Arial, sans-serif" font-size="26" font-weight="700">${escapeXml(projectName)}</text>
       ${titleSvg}
       ${subtitleSvg}
       ${bulletSvg}
       <rect x="80" y="1160" width="920" height="112" rx="38" fill="${palette.button}" />
-      <text x="540" y="1230" text-anchor="middle" fill="${card.theme === "ink" ? "#181817" : "#ffffff"}" font-family="Arial, sans-serif" font-size="34" font-weight="700">${escapeXml(card.cta)}</text>
+      <text x="540" y="1230" text-anchor="middle" fill="${palette.buttonText}" font-family="Arial, sans-serif" font-size="34" font-weight="700">${escapeXml(card.cta)}</text>
     </svg>
   `;
 }
@@ -285,20 +289,25 @@ function GeneratedPromoCard({
   onDownload: () => void;
   projectName: string;
 }) {
-  const styles = themeStyles[card.theme];
+  const styles = cardStyles[card.theme];
 
   return (
     <article
       className={cn(
-        "group relative flex aspect-[4/5] min-h-[22rem] flex-col overflow-hidden rounded-[2rem] border p-5 shadow-[0_30px_90px_-55px_rgba(0,0,0,0.75)] transition duration-300 hover:-translate-y-1 sm:p-6",
+        "group relative flex aspect-[4/5] min-h-[22rem] flex-col overflow-hidden rounded-[2rem] border p-5 shadow-[0_28px_80px_-55px_rgba(24,22,70,0.75)] transition duration-300 hover:-translate-y-1 sm:p-6",
         styles.background,
         styles.border,
         styles.text,
       )}
     >
-      <div className="pointer-events-none absolute -right-16 -top-16 size-52 rounded-full border-[34px] border-current opacity-[0.055]" />
+      <div className="pointer-events-none absolute -right-16 -top-16 size-52 rounded-full border-[34px] border-current opacity-[0.07]" />
       <div className="relative flex items-center justify-between gap-3">
-        <span className={cn("rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em]", styles.accent)}>
+        <span
+          className={cn(
+            "max-w-[75%] truncate rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em]",
+            styles.accent,
+          )}
+        >
           {projectName}
         </span>
         <span className={cn("text-xs font-semibold", styles.muted)}>0{index + 1}</span>
@@ -314,7 +323,12 @@ function GeneratedPromoCard({
       <ul className="relative mt-7 grid gap-3 text-sm font-semibold">
         {card.bullets.map((bullet) => (
           <li className="flex items-center gap-2.5" key={bullet}>
-            <span className={cn("flex size-6 shrink-0 items-center justify-center rounded-full", styles.accent)}>
+            <span
+              className={cn(
+                "flex size-6 shrink-0 items-center justify-center rounded-full",
+                styles.accent,
+              )}
+            >
               <Check className="size-3.5" strokeWidth={3} />
             </span>
             {bullet}
@@ -323,7 +337,12 @@ function GeneratedPromoCard({
       </ul>
 
       <div className="relative mt-auto pt-7">
-        <div className={cn("flex h-12 items-center justify-between rounded-2xl px-4 text-sm font-semibold", styles.button)}>
+        <div
+          className={cn(
+            "flex h-12 items-center justify-between rounded-2xl px-4 text-sm font-semibold",
+            styles.button,
+          )}
+        >
           {card.cta}
           <ArrowRight className="size-4" />
         </div>
@@ -363,7 +382,7 @@ export function AiStartPack() {
   const canGenerate = subject.trim().length >= 3 && audience.trim().length >= 2;
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("start-ip-launch-pack");
+    const saved = window.localStorage.getItem("delopusk-launch-pack");
     if (!saved) {
       return;
     }
@@ -375,7 +394,7 @@ export function AiStartPack() {
         setMode(parsed.mode ?? "template");
       }
     } catch {
-      window.localStorage.removeItem("start-ip-launch-pack");
+      window.localStorage.removeItem("delopusk-launch-pack");
     }
   }, []);
 
@@ -384,7 +403,7 @@ export function AiStartPack() {
       return;
     }
 
-    window.localStorage.setItem("start-ip-launch-pack", JSON.stringify({ mode, pack: result }));
+    window.localStorage.setItem("delopusk-launch-pack", JSON.stringify({ mode, pack: result }));
   }, [mode, result]);
 
   const generatePack = async () => {
@@ -411,7 +430,6 @@ export function AiStartPack() {
 
       setResult(payload.pack);
       setMode(payload.mode);
-
       window.dataLayer?.push({
         business_type: businessType,
         event: "start_pack_generated",
@@ -429,7 +447,7 @@ export function AiStartPack() {
     setMode(null);
     setError("");
     setCopied(false);
-    window.localStorage.removeItem("start-ip-launch-pack");
+    window.localStorage.removeItem("delopusk-launch-pack");
   };
 
   const copyPack = async () => {
@@ -459,7 +477,7 @@ export function AiStartPack() {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `${safeFilename(visiblePack.projectName) || "business-card"}-${index + 1}.svg`;
+    anchor.download = `${safeFilename(visiblePack.projectName) || "delopusk-card"}-${index + 1}.svg`;
     document.body.append(anchor);
     anchor.click();
     anchor.remove();
@@ -469,26 +487,32 @@ export function AiStartPack() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#181817] py-20 text-white sm:py-28" id="ai-pack">
-      <div className="landing-noise pointer-events-none absolute inset-0 opacity-[0.055] mix-blend-screen" />
-      <div className="pointer-events-none absolute -left-24 top-20 size-[30rem] rounded-full bg-[var(--landing-primary)]/12 blur-3xl" />
+    <section
+      className="relative overflow-hidden bg-[var(--brand-lavender)] py-20 text-[var(--brand-ink)] sm:py-28"
+      id="ai-pack"
+    >
+      <div className="brand-grid pointer-events-none absolute inset-0 opacity-30" />
+      <div className="pointer-events-none absolute -right-32 top-12 size-[34rem] rounded-full bg-[var(--brand-coral)]/12 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[0.68fr_1.32fr] lg:items-start lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-start lg:gap-16">
           <div className="lg:sticky lg:top-8">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-white/80">
-              <WandSparkles className="size-3.5 text-[var(--landing-primary)]" />
-              Бесплатный старт-пакет
+            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--brand-ink)]/8 bg-white/65 px-3.5 py-1.5 text-xs font-semibold">
+              <Sparkles className="size-3.5 text-[var(--brand-coral)]" />
+              Старт-пакет Делопуска
             </span>
-            <h2 className="mt-6 text-balance text-4xl font-bold leading-[0.96] tracking-[-0.06em] sm:text-6xl">
-              Получите первые продающие материалы до регистрации ИП
+            <h2 className="mt-6 text-balance text-4xl font-bold leading-[0.94] tracking-[-0.065em] sm:text-6xl">
+              Соберите первые материалы до оформления ИП
             </h2>
-            <p className="mt-6 max-w-xl text-pretty text-base leading-7 text-white/55 sm:text-lg">
-              Опишите бизнес двумя фразами. Генератор соберёт позиционирование, три карточки и план первой недели. Для маркетплейса — карточки товара, для услуг — промо-креативы.
+            <p className="mt-6 max-w-xl text-pretty text-base leading-7 text-[var(--brand-muted)] sm:text-lg">
+              Опишите бизнес двумя фразами. Делопуск подготовит позиционирование, три карточки и план первой недели. Без контактов и банковской анкеты.
             </p>
 
-            <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.055] p-5 sm:p-6">
-              <div className="grid gap-3 sm:grid-cols-2">
-                {businessOptions.map((option) => {
+            <div className="mt-8 rounded-[2rem] bg-[var(--brand-ink)] p-5 text-white shadow-[0_35px_90px_-60px_rgba(21,22,35,0.9)] sm:p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
+                Формат бизнеса
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {businessOptions.map((option, index) => {
                   const Icon = option.icon;
                   const isActive = option.value === businessType;
                   return (
@@ -496,8 +520,10 @@ export function AiStartPack() {
                       className={cn(
                         "rounded-2xl border p-4 text-left transition",
                         isActive
-                          ? "border-[var(--landing-primary)] bg-[var(--landing-primary)] text-black"
-                          : "border-white/10 bg-black/15 text-white hover:border-white/25 hover:bg-white/[0.06]",
+                          ? index % 2 === 0
+                            ? "border-[var(--brand-coral)] bg-[var(--brand-coral)] text-white"
+                            : "border-[var(--brand-mint)] bg-[var(--brand-mint)] text-[var(--brand-ink)]"
+                          : "border-white/10 bg-white/[0.04] text-white hover:border-white/25 hover:bg-white/[0.07]",
                       )}
                       key={option.value}
                       onClick={() => setBusinessType(option.value)}
@@ -505,7 +531,12 @@ export function AiStartPack() {
                     >
                       <Icon className="size-5" />
                       <span className="mt-3 block text-sm font-semibold">{option.label}</span>
-                      <span className={cn("mt-1 block text-xs leading-5", isActive ? "text-black/60" : "text-white/40")}>
+                      <span
+                        className={cn(
+                          "mt-1 block text-xs leading-5",
+                          isActive ? "opacity-65" : "text-white/40",
+                        )}
+                      >
                         {option.description}
                       </span>
                     </button>
@@ -517,7 +548,7 @@ export function AiStartPack() {
                 <label className="grid gap-2 text-sm font-medium" htmlFor="start-pack-subject">
                   Что вы продаёте или делаете?
                   <input
-                    className="h-13 rounded-2xl border border-white/10 bg-black/20 px-4 text-base text-white outline-none transition placeholder:text-white/25 focus:border-[var(--landing-primary)] focus:ring-4 focus:ring-[var(--landing-primary)]/10"
+                    className="h-13 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base text-white outline-none transition placeholder:text-white/25 focus:border-[var(--brand-coral)] focus:ring-4 focus:ring-[var(--brand-coral)]/10"
                     id="start-pack-subject"
                     maxLength={120}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => setSubject(event.target.value)}
@@ -529,7 +560,7 @@ export function AiStartPack() {
                 <label className="grid gap-2 text-sm font-medium" htmlFor="start-pack-audience">
                   Для кого?
                   <input
-                    className="h-13 rounded-2xl border border-white/10 bg-black/20 px-4 text-base text-white outline-none transition placeholder:text-white/25 focus:border-[var(--landing-primary)] focus:ring-4 focus:ring-[var(--landing-primary)]/10"
+                    className="h-13 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base text-white outline-none transition placeholder:text-white/25 focus:border-[var(--brand-mint)] focus:ring-4 focus:ring-[var(--brand-mint)]/10"
                     id="start-pack-audience"
                     maxLength={100}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => setAudience(event.target.value)}
@@ -547,8 +578,8 @@ export function AiStartPack() {
                       className={cn(
                         "h-10 rounded-xl border px-2 text-xs font-semibold transition sm:text-sm",
                         toneOption.value === tone
-                          ? "border-white bg-white text-black"
-                          : "border-white/10 bg-black/15 text-white/60 hover:text-white",
+                          ? "border-white bg-white text-[var(--brand-ink)]"
+                          : "border-white/10 bg-white/[0.04] text-white/55 hover:text-white",
                       )}
                       key={toneOption.value}
                       onClick={() => setTone(toneOption.value)}
@@ -561,13 +592,16 @@ export function AiStartPack() {
               </div>
 
               {error && (
-                <p className="mt-4 rounded-xl border border-red-400/20 bg-red-400/10 px-3.5 py-3 text-sm text-red-100" role="alert">
+                <p
+                  className="mt-4 rounded-xl border border-red-300/25 bg-red-300/10 px-3.5 py-3 text-sm text-red-100"
+                  role="alert"
+                >
                   {error}
                 </p>
               )}
 
               <Button
-                className="mt-5 h-13 w-full rounded-2xl bg-[var(--landing-primary)] text-sm font-semibold text-black hover:bg-[var(--landing-primary)]/90"
+                className="mt-5 h-13 w-full rounded-2xl bg-[var(--brand-coral)] text-sm font-semibold text-white hover:bg-[var(--brand-coral-strong)]"
                 disabled={isLoading}
                 onClick={generatePack}
                 type="button"
@@ -580,12 +614,12 @@ export function AiStartPack() {
                 ) : (
                   <>
                     <Sparkles className="size-4" />
-                    Создать старт-пакет бесплатно
+                    Создать старт-пакет
                   </>
                 )}
               </Button>
               <p className="mt-3 text-center text-xs leading-5 text-white/35">
-                Без e‑mail, телефона и паспортных данных. Не вводите персональную информацию.
+                Без e-mail, телефона и паспортных данных. Не вводите персональную информацию.
               </p>
             </div>
           </div>
@@ -594,19 +628,19 @@ export function AiStartPack() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs font-semibold text-white/55">
+                  <span className="rounded-full border border-[var(--brand-ink)]/8 bg-white/65 px-3 py-1 text-xs font-semibold text-[var(--brand-muted)]">
                     {result ? (mode === "ai" ? "Создано AI" : "Умный шаблон") : "Пример результата"}
                   </span>
                   {result && (
-                    <span className="rounded-full bg-[var(--landing-primary)] px-3 py-1 text-xs font-semibold text-black">
-                      Сохранено в этом браузере
+                    <span className="rounded-full bg-[var(--brand-mint)] px-3 py-1 text-xs font-semibold text-[var(--brand-ink)]">
+                      Сохранено в браузере
                     </span>
                   )}
                 </div>
-                <h3 className="mt-4 text-3xl font-bold tracking-[-0.045em] sm:text-4xl">
+                <h3 className="mt-4 text-3xl font-bold tracking-[-0.05em] sm:text-5xl">
                   {visiblePack.projectName}
                 </h3>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-white/55 sm:text-base">
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--brand-muted)] sm:text-base">
                   {visiblePack.positioning}
                 </p>
               </div>
@@ -614,7 +648,7 @@ export function AiStartPack() {
               {result && (
                 <div className="flex gap-2">
                   <button
-                    className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-4 text-xs font-semibold transition hover:bg-white/10"
+                    className="inline-flex h-11 items-center gap-2 rounded-xl border border-[var(--brand-ink)]/8 bg-white px-4 text-xs font-semibold transition hover:bg-[var(--brand-paper)]"
                     onClick={copyPack}
                     type="button"
                   >
@@ -623,7 +657,7 @@ export function AiStartPack() {
                   </button>
                   <button
                     aria-label="Сбросить результат"
-                    className="flex size-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] transition hover:bg-white/10"
+                    className="flex size-11 items-center justify-center rounded-xl border border-[var(--brand-ink)]/8 bg-white transition hover:bg-[var(--brand-paper)]"
                     onClick={resetPack}
                     type="button"
                   >
@@ -646,24 +680,36 @@ export function AiStartPack() {
               ))}
             </div>
 
-            <div className="mt-5 rounded-[2rem] border border-white/10 bg-white/[0.05] p-5 sm:p-6">
+            <div className="mt-5 rounded-[2rem] border border-[var(--brand-ink)]/8 bg-white/72 p-5 sm:p-6">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--landing-primary)]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--brand-coral)]">
                     План первой недели
                   </p>
-                  <h4 className="mt-2 text-xl font-semibold tracking-[-0.025em]">
+                  <h4 className="mt-2 text-xl font-bold tracking-[-0.03em]">
                     От идеи к первым рабочим материалам
                   </h4>
                 </div>
-                <span className="hidden rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/45 sm:inline-flex">
+                <span className="hidden rounded-full border border-[var(--brand-ink)]/8 px-3 py-1.5 text-xs text-[var(--brand-muted)] sm:inline-flex">
                   5 шагов
                 </span>
               </div>
               <ol className="mt-5 grid gap-3 sm:grid-cols-2">
                 {visiblePack.checklist.map((item, index) => (
-                  <li className="flex gap-3 rounded-2xl border border-white/8 bg-black/15 p-4 text-sm leading-6 text-white/70" key={item}>
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/8 text-xs font-bold text-white">
+                  <li
+                    className="flex gap-3 rounded-2xl border border-[var(--brand-ink)]/8 bg-[var(--brand-paper)] p-4 text-sm leading-6 text-[var(--brand-muted)]"
+                    key={item}
+                  >
+                    <span
+                      className={cn(
+                        "flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold",
+                        index % 3 === 0
+                          ? "bg-[var(--brand-primary)] text-white"
+                          : index % 3 === 1
+                            ? "bg-[var(--brand-coral)] text-white"
+                            : "bg-[var(--brand-mint)] text-[var(--brand-ink)]",
+                      )}
+                    >
                       {index + 1}
                     </span>
                     {item}
@@ -673,15 +719,17 @@ export function AiStartPack() {
             </div>
 
             {result && (
-              <div className="mt-5 rounded-[2rem] bg-[var(--landing-primary)] p-5 text-black sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-6">
+              <div className="mt-5 rounded-[2rem] bg-[var(--brand-mint)] p-5 text-[var(--brand-ink)] sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-6">
                 <div>
-                  <p className="text-lg font-bold tracking-[-0.025em]">Материалы готовы. Теперь можно оформить основу бизнеса.</p>
-                  <p className="mt-1 text-sm leading-6 text-black/60">
-                    Результат останется в этой вкладке, а официальная заявка Т‑Банка откроется отдельно.
+                  <p className="text-lg font-bold tracking-[-0.03em]">
+                    Материалы готовы. Оформите основу бизнеса.
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-[var(--brand-muted)]">
+                    Результат сохранится, а официальная заявка партнёра откроется отдельно.
                   </p>
                 </div>
                 <TrackedReferralLink
-                  className="mt-5 w-full shrink-0 bg-[#181817] text-white shadow-none hover:brightness-110 sm:mt-0 sm:w-auto"
+                  className="mt-5 w-full shrink-0 bg-[var(--brand-primary)] text-white shadow-none hover:bg-[var(--brand-primary-strong)] sm:mt-0 sm:w-auto"
                   openInNewTab
                   placement="ai-pack-result"
                 >
@@ -691,8 +739,8 @@ export function AiStartPack() {
               </div>
             )}
 
-            <p className="mt-4 text-xs leading-5 text-white/30">
-              Карточки и тексты — маркетинговые черновики. Коды ОКВЭД, налоговый режим и условия регистрации уточняются отдельно на официальной странице банка.
+            <p className="mt-4 text-xs leading-5 text-[var(--brand-muted)]/75">
+              Карточки и тексты — маркетинговые черновики. Коды ОКВЭД, налоговый режим и условия регистрации уточняются на официальной странице партнёра.
             </p>
           </div>
         </div>
