@@ -45,17 +45,13 @@ export function SiteHeader() {
           <BrandMark />
           <span>
             <span className="block text-sm font-bold tracking-[-0.025em]">Делопуск</span>
-            <span className="block text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--brand-muted)]">
-              запуск бизнеса
-            </span>
+            <span className="block text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--brand-muted)]">запуск бизнеса</span>
           </span>
         </Link>
 
         <nav className="hidden items-center gap-7 text-sm font-medium text-[var(--brand-muted)] lg:flex">
           {navItems.map((item) => (
-            <Link className="transition hover:text-[var(--brand-ink)]" href={item.href} key={item.href}>
-              {item.label}
-            </Link>
+            <Link className="transition hover:text-[var(--brand-ink)]" href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </nav>
 
@@ -84,16 +80,12 @@ export function SiteFooter() {
             <p className="mt-5 leading-6">
               Делопуск — независимая партнёрская информационная страница, не официальный сайт Т‑Банка. При переходе по ссылке и оформлении продукта владелец страницы может получить вознаграждение. Банковские услуги предоставляет АО «ТБанк», универсальная лицензия Банка России № 2673. Решение о государственной регистрации принимает ФНС.
             </p>
-            <p className="mt-2 leading-6">
-              Страница не принимает банковские заявки и не собирает паспортные данные. Проверяйте актуальные условия на официальном сайте партнёра.
-            </p>
+            <p className="mt-2 leading-6">Страница не принимает банковские заявки и не собирает паспортные данные. Проверяйте актуальные условия на официальном сайте партнёра.</p>
           </div>
 
           <div className="grid content-start gap-3 text-xs">
             {navItems.map((item) => (
-              <Link className="font-semibold text-[var(--brand-ink)] hover:text-[var(--brand-primary)]" href={item.href} key={item.href}>
-                {item.label}
-              </Link>
+              <Link className="font-semibold text-[var(--brand-ink)] hover:text-[var(--brand-primary)]" href={item.href} key={item.href}>{item.label}</Link>
             ))}
             <TrackedReferralLink
               className="mt-2 h-11 rounded-xl border border-[var(--brand-ink)]/10 bg-white px-5 text-xs text-[var(--brand-ink)] shadow-none hover:bg-[var(--brand-lavender)]"
@@ -111,11 +103,11 @@ export function SiteFooter() {
 
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
-    <main className="landing-page overflow-hidden">
+    <div className="landing-page overflow-hidden">
       <MotionOrchestrator />
       <SiteHeader />
-      {children}
+      <main>{children}</main>
       <SiteFooter />
-    </main>
+    </div>
   );
 }
