@@ -32,6 +32,9 @@ import { cn } from "@bank/ui/lib/utils";
 import { AiStartPack } from "@/components/ai-start-pack";
 import { TrackedReferralLink } from "@/components/tracked-referral-link";
 
+const BRAND_NAME = "Делопуск";
+const BRAND_DOMAIN = "delopusk.ru";
+
 const facts = [
   { value: "0 ₽", label: "регистрация" },
   { value: "3–5", label: "рабочих дней" },
@@ -142,9 +145,9 @@ const faqs = [
       "Услуга регистрации стоит 0 ₽. При электронной подаче через сервис банка госпошлина не требуется. Актуальные условия отображаются на странице Т‑Банка перед оформлением.",
   },
   {
-    question: "Что входит в бесплатный старт-пакет?",
+    question: "Что входит в старт-пакет Делопуска?",
     answer:
-      "На этой странице можно бесплатно получить черновик позиционирования, три промо-карточки и план первой недели. Карточки скачиваются в SVG и подходят как основа для маркетплейса, соцсетей или лендинга.",
+      "Вы бесплатно получаете черновик позиционирования, три промо-карточки и план первой недели. Карточки скачиваются в SVG и подходят как основа для маркетплейса, соцсетей или лендинга.",
   },
   {
     question: "Нужно оставлять телефон или e‑mail для генерации?",
@@ -169,14 +172,46 @@ const faqs = [
   {
     question: "Помогут выбрать ОКВЭД и систему налогообложения?",
     answer:
-      "Сотрудники банка объяснят варианты, помогут подобрать коды деятельности и расскажут о доступных налоговых режимах. AI-генератор на этой странице не заменяет такую консультацию.",
+      "Сотрудники банка объяснят варианты, помогут подобрать коды деятельности и расскажут о доступных налоговых режимах. AI‑генератор Делопуска не заменяет такую консультацию.",
   },
   {
-    question: "Это официальный сайт Т‑Банка?",
+    question: "Делопуск — официальный сайт Т‑Банка?",
     answer:
-      "Нет. Это партнёрская информационная страница. По кнопке вы переходите на официальный домен tbank.ru, где заполняете заявку и принимаете условия банка.",
+      "Нет. Делопуск — независимая партнёрская информационная страница. По кнопке вы переходите на официальный домен tbank.ru, где заполняете заявку и принимаете условия банка.",
   },
 ] as const;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: BRAND_NAME,
+  url: `https://${BRAND_DOMAIN}`,
+  description:
+    "Запуск бизнеса онлайн: бесплатный старт-пакет и регистрация ИП через Т‑Банк.",
+};
+
+function Brand({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className="flex items-center gap-2.5">
+      <span
+        className={cn(
+          "flex items-center justify-center bg-[var(--landing-primary)] font-black tracking-[-0.08em] text-black shadow-sm",
+          compact ? "size-8 rounded-xl text-xs" : "size-10 rounded-[0.9rem] text-sm",
+        )}
+      >
+        Д
+      </span>
+      <span className="leading-none">
+        <span className="block font-bold tracking-[-0.035em]">{BRAND_NAME}</span>
+        {!compact && (
+          <span className="mt-1 block text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            запуск бизнеса
+          </span>
+        )}
+      </span>
+    </span>
+  );
+}
 
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
@@ -304,23 +339,25 @@ function HeroPanel() {
 export default function Home() {
   return (
     <main className="landing-page overflow-hidden pb-24 sm:pb-0">
-      <header className="relative z-30 border-b border-black/6 bg-[var(--landing-background)]/82 backdrop-blur-xl">
-        <div className="mx-auto flex h-17 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <a aria-label="Старт ИП — наверх" className="flex items-center gap-2.5" href="#top">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-[var(--landing-primary)] text-sm font-black tracking-[-0.04em] text-black shadow-sm">
-              ИП
-            </span>
-            <span className="font-semibold tracking-[-0.02em]">Старт ИП</span>
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        type="application/ld+json"
+      />
+
+      <header className="relative z-30 border-b border-black/6 bg-[var(--landing-background)]/88 backdrop-blur-xl">
+        <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <a aria-label="Делопуск — наверх" href="#top">
+            <Brand compact />
           </a>
           <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
             <a className="transition-colors hover:text-foreground" href="#ai-pack">
-              AI‑старт‑пакет
+              Старт-пакет
             </a>
             <a className="transition-colors hover:text-foreground" href="#benefits">
               Возможности
             </a>
             <a className="transition-colors hover:text-foreground" href="#steps">
-              Как это работает
+              Как открыть
             </a>
             <a className="transition-colors hover:text-foreground" href="#faq">
               Вопросы
@@ -342,24 +379,27 @@ export default function Home() {
           <div className="max-w-3xl">
             <Eyebrow>
               <CircleCheckBig className="size-3.5" />
-              Регистрация проходит через Т‑Банк
+              {BRAND_NAME} · запуск бизнеса онлайн
             </Eyebrow>
-            <h1 className="mt-7 text-balance text-[clamp(3.2rem,7vw,5.9rem)] font-bold leading-[0.93] tracking-[-0.068em]">
+            <h1 className="mt-7 text-balance text-[clamp(3.15rem,7vw,5.85rem)] font-bold leading-[0.93] tracking-[-0.068em]">
               Откройте ИП онлайн за <span className="whitespace-nowrap">0 ₽</span>
             </h1>
             <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-              Т‑Банк подготовит документы, поможет выбрать ОКВЭД и налоговый режим,
-              передаст заявку в ФНС и бесплатно откроет расчётный счёт.
+              Т‑Банк подготовит документы и передаст заявку в ФНС. Делопуск бесплатно
+              соберёт первые материалы для продвижения бизнеса.
             </p>
 
-            <div className="mt-6 flex max-w-2xl items-start gap-3 rounded-2xl border border-black/8 bg-white/75 p-4 shadow-sm backdrop-blur">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--landing-primary)] text-black">
+            <div className="mt-7 flex max-w-2xl items-start gap-3 rounded-2xl border border-black/8 bg-white/75 p-4 shadow-sm backdrop-blur">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--landing-primary)] text-black">
                 <Sparkles className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-semibold">Бонус: бесплатный старт-пакет бизнеса</p>
+                <p className="font-semibold tracking-[-0.02em]">
+                  Старт-пакет Делопуска — бесплатно
+                </p>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Сгенерируйте три продающие карточки, позиционирование и план первой недели — без телефона и e‑mail.
+                  Три промо-карточки, позиционирование и план первой недели — без
+                  телефона и e‑mail.
                 </p>
               </div>
             </div>
@@ -370,11 +410,10 @@ export default function Home() {
                 <ArrowRight className="size-5" />
               </TrackedReferralLink>
               <a
-                className="inline-flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-2xl border border-black/10 bg-white/75 px-7 text-sm font-semibold shadow-sm backdrop-blur transition hover:bg-white sm:w-auto"
+                className="inline-flex h-[3.25rem] w-full items-center justify-center rounded-2xl border border-black/10 bg-white/75 px-7 text-sm font-semibold shadow-sm backdrop-blur transition hover:bg-white sm:w-auto"
                 href="#ai-pack"
               >
-                <Sparkles className="size-4" />
-                Получить старт-пакет
+                Собрать старт-пакет
               </a>
             </div>
             <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
@@ -405,9 +444,9 @@ export default function Home() {
       <section className="border-y border-black/6 bg-white/55 py-20 sm:py-28" id="benefits">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
+            description="Вместо поиска форм и поездок по инстанциям — один понятный сценарий с подсказками на каждом шаге."
             eyebrow="Меньше бюрократии"
             title="Банк берёт рутину на себя"
-            description="Вместо поиска форм и поездок по инстанциям — один понятный сценарий с подсказками на каждом шаге."
           />
 
           <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -439,9 +478,9 @@ export default function Home() {
       <section className="py-20 sm:py-28" id="steps">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
+            description="Большую часть процесса ведёт Т‑Банк. Вам остаётся заполнить анкету и подписать подготовленные документы."
             eyebrow="Четыре шага"
             title="От заявки до готового ИП"
-            description="Большую часть процесса ведёт Т‑Банк. Вам остаётся заполнить анкету и подписать подготовленные документы."
           />
 
           <div className="relative mt-14 grid gap-8 lg:grid-cols-4 lg:gap-5">
@@ -469,7 +508,8 @@ export default function Home() {
                   Начните с короткой онлайн-заявки
                 </h3>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-white/55">
-                  После перехода вы окажетесь на официальной странице Т‑Банка. Банк покажет актуальные условия до отправки данных.
+                  После перехода вы окажетесь на официальной странице Т‑Банка. Банк
+                  покажет актуальные условия до отправки данных.
                 </p>
               </div>
             </div>
@@ -487,9 +527,9 @@ export default function Home() {
       <section className="border-y border-black/6 bg-[#f1efe8]/75 py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
+            description="Регистрация ИП пригодится, когда нужно официально принимать оплату, заключать договоры и отделить личные финансы от бизнеса."
             eyebrow="Для старта и роста"
             title="Подходит большинству небольших бизнесов"
-            description="Регистрация ИП пригодится, когда нужно официально принимать оплату, заключать договоры и отделить личные финансы от бизнеса."
           />
 
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -519,16 +559,17 @@ export default function Home() {
       <section className="py-20 sm:py-28" id="faq">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
+            description="Короткие ответы о стоимости, старт-пакете, документах и процессе регистрации."
             eyebrow="Без мелкого шрифта"
             title="Частые вопросы"
-            description="Короткие ответы о стоимости, AI-бонусе, документах и процессе регистрации."
           />
 
           <div className="mt-12 grid gap-3">
-            {faqs.map((faq) => (
+            {faqs.map((faq, index) => (
               <details
                 className="group rounded-2xl border border-black/8 bg-white/75 px-5 shadow-sm backdrop-blur open:bg-white"
                 key={faq.question}
+                open={index === 0 ? true : undefined}
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left font-semibold tracking-[-0.015em] [&::-webkit-details-marker]:hidden">
                   {faq.question}
@@ -548,13 +589,14 @@ export default function Home() {
           <div className="pointer-events-none absolute -right-20 -top-32 size-96 rounded-full border-[60px] border-black/[0.045]" />
           <div className="relative max-w-3xl">
             <span className="inline-flex rounded-full border border-black/10 bg-black/8 px-3.5 py-1.5 text-xs font-semibold">
-              Готовы начать?
+              Запусти дело
             </span>
             <h2 className="mt-5 text-balance text-3xl font-bold tracking-[-0.055em] sm:text-5xl">
-              Оформите ИП и заберите готовые материалы для старта
+              Материалы готовы — оформите основу бизнеса
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-7 text-black/65 sm:text-lg">
-              Перейдите на официальную страницу Т‑Банка. Старт-пакет сохранится в этом браузере, чтобы вы могли вернуться к карточкам и плану.
+              Перейдите на официальную страницу Т‑Банка и заполните заявку на
+              регистрацию ИП. Старт-пакет Делопуска останется в вашем браузере.
             </p>
           </div>
           <TrackedReferralLink
@@ -571,17 +613,23 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground sm:px-6 lg:px-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="max-w-3xl">
-              <div className="flex items-center gap-2.5 text-foreground">
-                <span className="flex size-8 items-center justify-center rounded-lg bg-[var(--landing-primary)] text-xs font-black text-black">
-                  ИП
+              <div className="flex items-center justify-between gap-4 sm:justify-start">
+                <Brand />
+                <span className="rounded-full border border-black/8 bg-white px-3 py-1.5 text-xs font-semibold text-foreground">
+                  {BRAND_DOMAIN}
                 </span>
-                <span className="font-semibold">Старт ИП</span>
               </div>
-              <p className="mt-4 leading-6">
-                Партнёрская информационная страница, не официальный сайт Т‑Банка. При переходе по ссылке и оформлении продукта владелец страницы может получить вознаграждение. Банковские услуги предоставляет АО «ТБанк», универсальная лицензия Банка России № 2673. Решение о государственной регистрации принимает ФНС.
+              <p className="mt-5 leading-6">
+                Делопуск — партнёрская информационная страница, не официальный сайт
+                Т‑Банка. При переходе по ссылке и оформлении продукта владелец страницы
+                может получить вознаграждение. Банковские услуги предоставляет АО
+                «ТБанк», универсальная лицензия Банка России № 2673. Решение о
+                государственной регистрации принимает ФНС.
               </p>
               <p className="mt-2 leading-6">
-                Условия и доступность сервиса могут измениться. Проверяйте актуальную информацию на сайте Т‑Банка перед отправкой заявки. Эта страница не собирает паспортные данные и не принимает заявки самостоятельно. AI-материалы являются маркетинговыми черновиками.
+                Условия и доступность сервиса могут измениться. Проверяйте актуальную
+                информацию на сайте Т‑Банка перед отправкой заявки. Делопуск не собирает
+                паспортные данные и не принимает заявки самостоятельно.
               </p>
             </div>
             <TrackedReferralLink
