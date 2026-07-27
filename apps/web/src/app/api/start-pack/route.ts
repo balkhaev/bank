@@ -1,15 +1,31 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+function cleanLabel(value: string) {
+  return value
+    .replace(/[<>]/g, "")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function cleanText(minLength: number, maxLength: number) {
+  return z
+    .string()
+    .trim()
+    .max(maxLength)
+    .transform(cleanLabel)
+    .refine((value) => value.length >= minLength, "Недостаточно данных");
+}
+
 const inputSchema = z.object({
-  audience: z.string().trim().min(2).max(100),
+  audience: cleanText(2, 100),
   businessType: z.enum(["marketplace", "services", "local", "b2b"]),
-  subject: z.string().trim().min(3).max(120),
+  subject: cleanText(3, 120),
   tone: z.enum(["confident", "friendly", "premium"]),
 });
 
 const shortLineSchema = z.string().trim().min(1).max(80);
-
 const cardSchema = z.object({
   bullets: z.tuple([
     shortLineSchema.max(38),
@@ -21,9 +37,7 @@ const cardSchema = z.object({
   theme: z.enum(["sun", "ink", "paper"]),
   title: z.string().trim().min(1).max(38),
 });
-
 const checklistItemSchema = z.string().trim().min(1).max(120);
-
 const launchPackSchema = z.object({
   cards: z.tuple([cardSchema, cardSchema, cardSchema]),
   checklist: z.tuple([
@@ -39,19 +53,14 @@ const launchPackSchema = z.object({
 
 type Input = z.infer<typeof inputSchema>;
 type LaunchPack = z.infer<typeof launchPackSchema>;
-
-type RateEntry = {
-  count: number;
-  resetAt: number;
-};
+type Card = z.infer<typeof cardSchema>;
+type RateEntry = { count: number; resetAt: number };
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 6;
-
 const globalRateState = globalThis as typeof globalThis & {
   __startPackRateLimit?: Map<string, RateEntry>;
 };
-
 const rateLimitStore =
   globalRateState.__startPackRateLimit ??
   (globalRateState.__startPackRateLimit = new Map<string, RateEntry>());
@@ -62,22 +71,52 @@ const typeLabels: Record<Input["businessType"], string> = {
   marketplace: "товар для маркетплейса",
   services: "услуга или частная практика",
 };
-
 const toneLabels: Record<Input["tone"], string> = {
   confident: "уверенный и конкретный",
   friendly: "дружелюбный и простой",
   premium: "сдержанный и премиальный",
 };
 
-function cleanLabel(value: string) {
-  return value.replace(/[<>]/g, "").replace(/\s+/g, " ").trim();
-}
+const launchPackJsonSchema = {
+  additionalProperties: false,
+  properties: {
+    cards: {
+      items: {
+        additionalProperties: false,
+        properties: {
+          bullets: {
+            items: { maxLength: 38, minLength: 1, type: "string" },
+            maxItems: 3,
+            minItems: 3,
+            type: "array",
+          },
+          cta: { maxLength: 26, minLength: 1, type: "string" },
+          subtitle: { maxLength: 90, minLength: 1, type: "string" },
+          theme: { enum: ["sun", "ink", "paper"], type: "string" },
+          title: { maxLength: 38, minLength: 1, type: "string" },
+        },
+        required: ["title", "subtitle", "bullets", "cta", "theme"],
+        type: "object",
+      },
+      maxItems: 3,
+      minItems: 3,
+      type: "array",
+    },
+    checklist: {
+      items: { maxLength: 120, minLength: 1, type: "string" },
+      maxItems: 5,
+      minItems: 5,
+      type: "array",
+    },
+    positioning: { maxLength: 220, minLength: 1, type: "string" },
+    projectName: { maxLength: 42, minLength: 1, type: "string" },
+  },
+  required: ["projectName", "positioning", "cards", "checklist"],
+  type: "object",
+} as const;
 
 function truncate(value: string, maxLength: number) {
-  if (value.length <= maxLength) {
-    return value;
-  }
-
+  if (value.length <= maxLength) return value;
   return `${value.slice(0, Math.max(1, maxLength - 1)).trimEnd()}…`;
 }
 
@@ -89,122 +128,132 @@ function titleCase(value: string) {
     .join(" ");
 }
 
-function buildFallbackPack(input: Input): LaunchPack {
-  const fullSubject = cleanLabel(input.subject);
-  const fullAudience = cleanLabel(input.audience);
-  const subject = truncate(fullSubject, 38);
-  const audience = truncate(fullAudience, 44);
-  const projectName = truncate(titleCase(fullSubject) || "Новый проект", 42);
-
-  const templates: Record<Input["businessType"], LaunchPack["cards"]> = {
-    marketplace: [
-      {
-        bullets: ["Понятная выгода", "Акцент на деталях", "Готово к заказу"],
-        cta: "Посмотреть товар",
-        subtitle: truncate(
-          `Для ${audience}: быстро понять пользу и выбрать подходящий вариант.`,
-          90,
-        ),
-        theme: "sun",
-        title: subject,
-      },
-      {
-        bullets: ["Что внутри", "Кому подходит", "Почему удобно"],
-        cta: "Узнать больше",
-        subtitle: "Карточка с короткой структурой для каталога, рекламы или соцсетей.",
-        theme: "ink",
-        title: "Главное — за 5 секунд",
-      },
-      {
-        bullets: ["Без лишних слов", "Три ключевые причины", "Чёткий следующий шаг"],
-        cta: "Выбрать вариант",
-        subtitle: truncate(`Черновик позиционирования продукта «${subject}».`, 90),
-        theme: "paper",
-        title: "Почему это выбирают",
-      },
-    ],
-    services: [
-      {
-        bullets: ["Понятный результат", "Прозрачный процесс", "Удобный старт"],
-        cta: "Обсудить задачу",
-        subtitle: truncate(
-          `${subject} для ${audience} — без перегруженных формулировок.`,
-          90,
-        ),
-        theme: "sun",
-        title: "Решим задачу по шагам",
-      },
-      {
-        bullets: ["Разберём запрос", "Предложим план", "Доведём до результата"],
-        cta: "Получить план",
-        subtitle: "Промо-карточка для сайта, объявления или сообщения клиенту.",
-        theme: "ink",
-        title: projectName,
-      },
-      {
-        bullets: ["Кому подходит", "Что получите", "Как начать"],
-        cta: "Начать с консультации",
-        subtitle: truncate(`Короткий оффер для аудитории: ${audience}.`, 90),
-        theme: "paper",
-        title: "Всё важное — сразу",
-      },
-    ],
-    local: [
-      {
-        bullets: ["Рядом и удобно", "Понятные условия", "Быстрый ответ"],
-        cta: "Уточнить детали",
-        subtitle: truncate(
-          `${subject} для ${audience} с акцентом на локальное доверие.`,
-          90,
-        ),
-        theme: "sun",
-        title: "Ваш бизнес рядом",
-      },
-      {
-        bullets: ["Что предлагаем", "Как заказать", "Когда получить"],
-        cta: "Оставить запрос",
-        subtitle: "Готовый каркас рекламной карточки для геосервисов и соцсетей.",
-        theme: "ink",
-        title: projectName,
-      },
-      {
-        bullets: ["Без сложных шагов", "Человеческий сервис", "Понятный результат"],
-        cta: "Связаться",
-        subtitle: truncate(`Предложение, рассчитанное на ${audience}.`, 90),
-        theme: "paper",
-        title: "Можно начать сегодня",
-      },
-    ],
-    b2b: [
-      {
-        bullets: ["Экономим время", "Снижаем ручную работу", "Даём понятный результат"],
-        cta: "Запросить расчёт",
-        subtitle: truncate(
-          `${subject} для ${audience} — конкретно, без рекламного шума.`,
-          90,
-        ),
-        theme: "sun",
-        title: "Решение для бизнеса",
-      },
-      {
-        bullets: ["Задача", "Подход", "Измеримый результат"],
-        cta: "Получить предложение",
-        subtitle: "Структура карточки для коммерческого предложения и деловой переписки.",
-        theme: "ink",
-        title: projectName,
-      },
-      {
-        bullets: ["Быстрый старт", "Прозрачные этапы", "Ответственный контакт"],
-        cta: "Обсудить проект",
-        subtitle: truncate(`Позиционирование для аудитории: ${audience}.`, 90),
-        theme: "paper",
-        title: "От запроса к результату",
-      },
-    ],
+function card(
+  title: string,
+  subtitle: string,
+  bullets: Card["bullets"],
+  cta: string,
+  theme: Card["theme"],
+): Card {
+  return {
+    bullets,
+    cta: truncate(cta, 26),
+    subtitle: truncate(subtitle, 90),
+    theme,
+    title: truncate(title, 38),
   };
+}
+
+function buildFallbackPack(input: Input): LaunchPack {
+  const subject = truncate(input.subject, 38);
+  const audience = truncate(input.audience, 44);
+  const projectName = truncate(titleCase(input.subject) || "Новый проект", 42);
+  let cards: LaunchPack["cards"];
+
+  switch (input.businessType) {
+    case "services":
+      cards = [
+        card(
+          "Решим задачу по шагам",
+          `${subject} для ${audience} — без перегруженных формулировок.`,
+          ["Понятный результат", "Прозрачный процесс", "Удобный старт"],
+          "Обсудить задачу",
+          "sun",
+        ),
+        card(
+          projectName,
+          "Промо-карточка для сайта, объявления или сообщения клиенту.",
+          ["Разберём запрос", "Предложим план", "Доведём до результата"],
+          "Получить план",
+          "ink",
+        ),
+        card(
+          "Всё важное — сразу",
+          `Короткий оффер для аудитории: ${audience}.`,
+          ["Кому подходит", "Что получите", "Как начать"],
+          "Начать консультацию",
+          "paper",
+        ),
+      ];
+      break;
+    case "local":
+      cards = [
+        card(
+          "Ваш бизнес рядом",
+          `${subject} для ${audience} с акцентом на локальное доверие.`,
+          ["Рядом и удобно", "Понятные условия", "Быстрый ответ"],
+          "Уточнить детали",
+          "sun",
+        ),
+        card(
+          projectName,
+          "Готовый каркас рекламной карточки для геосервисов и соцсетей.",
+          ["Что предлагаем", "Как заказать", "Когда получить"],
+          "Оставить запрос",
+          "ink",
+        ),
+        card(
+          "Можно начать сегодня",
+          `Предложение, рассчитанное на ${audience}.`,
+          ["Без сложных шагов", "Человеческий сервис", "Понятный результат"],
+          "Связаться",
+          "paper",
+        ),
+      ];
+      break;
+    case "b2b":
+      cards = [
+        card(
+          "Решение для бизнеса",
+          `${subject} для ${audience} — конкретно, без рекламного шума.`,
+          ["Экономим время", "Снижаем ручную работу", "Понятный результат"],
+          "Запросить расчёт",
+          "sun",
+        ),
+        card(
+          projectName,
+          "Структура карточки для коммерческого предложения и деловой переписки.",
+          ["Задача", "Подход", "Измеримый результат"],
+          "Получить предложение",
+          "ink",
+        ),
+        card(
+          "От запроса к результату",
+          `Позиционирование для аудитории: ${audience}.`,
+          ["Быстрый старт", "Прозрачные этапы", "Ответственный контакт"],
+          "Обсудить проект",
+          "paper",
+        ),
+      ];
+      break;
+    default:
+      cards = [
+        card(
+          subject,
+          `Для ${audience}: быстро понять пользу и выбрать подходящий вариант.`,
+          ["Понятная выгода", "Акцент на деталях", "Готово к заказу"],
+          "Посмотреть товар",
+          "sun",
+        ),
+        card(
+          "Главное — за 5 секунд",
+          "Карточка с короткой структурой для каталога, рекламы или соцсетей.",
+          ["Что внутри", "Кому подходит", "Почему удобно"],
+          "Узнать больше",
+          "ink",
+        ),
+        card(
+          "Почему это выбирают",
+          `Черновик позиционирования продукта «${subject}».`,
+          ["Без лишних слов", "Три ключевые причины", "Чёткий следующий шаг"],
+          "Выбрать вариант",
+          "paper",
+        ),
+      ];
+  }
 
   return launchPackSchema.parse({
-    cards: templates[input.businessType],
+    cards,
     checklist: [
       "Уточнить основной продукт и одно главное обещание клиенту.",
       "Проверить доступность названия и домена проекта.",
@@ -230,29 +279,19 @@ function isRateLimited(request: Request) {
     rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
     return false;
   }
-
-  if (current.count >= RATE_LIMIT_MAX) {
-    return true;
-  }
+  if (current.count >= RATE_LIMIT_MAX) return true;
 
   current.count += 1;
-  rateLimitStore.set(ip, current);
   return false;
 }
 
 function extractOutputText(payload: unknown) {
-  if (!payload || typeof payload !== "object") {
-    return null;
-  }
-
+  if (!payload || typeof payload !== "object") return null;
   const response = payload as {
     output?: Array<{ content?: Array<{ text?: string; type?: string }> }>;
     output_text?: string;
   };
-
-  if (typeof response.output_text === "string") {
-    return response.output_text;
-  }
+  if (typeof response.output_text === "string") return response.output_text;
 
   for (const item of response.output ?? []) {
     for (const content of item.content ?? []) {
@@ -261,26 +300,22 @@ function extractOutputText(payload: unknown) {
       }
     }
   }
-
   return null;
 }
 
 async function generateWithOpenAI(input: Input) {
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return null;
-  }
+  if (!apiKey) return null;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 18_000);
-
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {
       body: JSON.stringify({
         input: JSON.stringify({
-          audience: cleanLabel(input.audience),
+          audience: input.audience,
           businessType: typeLabels[input.businessType],
-          subject: cleanLabel(input.subject),
+          subject: input.subject,
           tone: toneLabels[input.tone],
         }),
         instructions:
@@ -292,43 +327,7 @@ async function generateWithOpenAI(input: Input) {
         text: {
           format: {
             name: "small_business_launch_pack",
-            schema: {
-              additionalProperties: false,
-              properties: {
-                cards: {
-                  items: {
-                    additionalProperties: false,
-                    properties: {
-                      bullets: {
-                        items: { maxLength: 38, minLength: 1, type: "string" },
-                        maxItems: 3,
-                        minItems: 3,
-                        type: "array",
-                      },
-                      cta: { maxLength: 26, minLength: 1, type: "string" },
-                      subtitle: { maxLength: 90, minLength: 1, type: "string" },
-                      theme: { enum: ["sun", "ink", "paper"], type: "string" },
-                      title: { maxLength: 38, minLength: 1, type: "string" },
-                    },
-                    required: ["title", "subtitle", "bullets", "cta", "theme"],
-                    type: "object",
-                  },
-                  maxItems: 3,
-                  minItems: 3,
-                  type: "array",
-                },
-                checklist: {
-                  items: { maxLength: 120, minLength: 1, type: "string" },
-                  maxItems: 5,
-                  minItems: 5,
-                  type: "array",
-                },
-                positioning: { maxLength: 220, minLength: 1, type: "string" },
-                projectName: { maxLength: 42, minLength: 1, type: "string" },
-              },
-              required: ["projectName", "positioning", "cards", "checklist"],
-              type: "object",
-            },
+            schema: launchPackJsonSchema,
             strict: true,
             type: "json_schema",
           },
@@ -341,17 +340,11 @@ async function generateWithOpenAI(input: Input) {
       method: "POST",
       signal: controller.signal,
     });
-
-    if (!response.ok) {
-      return null;
-    }
+    if (!response.ok) return null;
 
     const payload: unknown = await response.json();
     const outputText = extractOutputText(payload);
-    if (!outputText) {
-      return null;
-    }
-
+    if (!outputText) return null;
     return launchPackSchema.parse(JSON.parse(outputText));
   } catch {
     return null;
@@ -378,7 +371,7 @@ export async function POST(request: Request) {
   const parsedInput = inputSchema.safeParse(rawInput);
   if (!parsedInput.success) {
     return NextResponse.json(
-      { error: "Заполните направление, продукт и аудиторию короткими понятными фразами." },
+      { error: "Заполните продукт и аудиторию короткими понятными фразами." },
       { status: 400 },
     );
   }
@@ -387,14 +380,7 @@ export async function POST(request: Request) {
   const pack = aiPack ?? buildFallbackPack(parsedInput.data);
 
   return NextResponse.json(
-    {
-      mode: aiPack ? "ai" : "template",
-      pack,
-    },
-    {
-      headers: {
-        "Cache-Control": "no-store",
-      },
-    },
+    { mode: aiPack ? "ai" : "template", pack },
+    { headers: { "Cache-Control": "no-store" } },
   );
 }
