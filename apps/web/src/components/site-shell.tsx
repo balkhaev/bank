@@ -31,10 +31,9 @@ export function BrandMark({ className = "" }: { className?: string }) {
 }
 
 const navItems = [
-  { href: "/idea", label: "Идея и бренд" },
-  { href: "/ip", label: "Открыть ИП" },
-  { href: "/materials", label: "Материалы" },
-  { href: "/guides", label: "Гайды" },
+  { href: "/#how", label: "Как работает" },
+  { href: "/#result-preview", label: "Что получите" },
+  { href: "/#segments", label: "Для кого" },
 ] as const;
 
 export function SiteHeader() {
@@ -55,10 +54,9 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <TrackedReferralLink className="h-10 rounded-xl px-4 text-xs shadow-none" placement="header">
-          Открыть ИП
-          <ArrowRight className="size-4" />
-        </TrackedReferralLink>
+        <Link className="inline-flex h-10 items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 text-xs font-semibold text-white" href="/start">
+          Начать <ArrowRight className="size-4" />
+        </Link>
       </div>
     </header>
   );
@@ -72,27 +70,19 @@ export function SiteFooter() {
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 text-[var(--brand-ink)]">
               <BrandMark className="size-9 rounded-[0.95rem]" />
-              <div>
-                <span className="block font-bold">Делопуск</span>
-                <span className="block text-xs text-[var(--brand-muted)]">delopusk.ru</span>
-              </div>
+              <div><span className="block font-bold">Делопуск</span><span className="block text-xs">delopusk.ru</span></div>
             </div>
             <p className="mt-5 leading-6">
               Делопуск — независимая партнёрская информационная страница, не официальный сайт Т‑Банка. При переходе по ссылке и оформлении продукта владелец страницы может получить вознаграждение. Банковские услуги предоставляет АО «ТБанк», универсальная лицензия Банка России № 2673. Решение о государственной регистрации принимает ФНС.
             </p>
-            <p className="mt-2 leading-6">Страница не принимает банковские заявки и не собирает паспортные данные. Проверяйте актуальные условия на официальном сайте партнёра.</p>
+            <p className="mt-2 leading-6">Делопуск не принимает банковские заявки и не собирает паспортные данные.</p>
           </div>
 
           <div className="grid content-start gap-3 text-xs">
-            {navItems.map((item) => (
-              <Link className="font-semibold text-[var(--brand-ink)] hover:text-[var(--brand-primary)]" href={item.href} key={item.href}>{item.label}</Link>
-            ))}
-            <TrackedReferralLink
-              className="mt-2 h-11 rounded-xl border border-[var(--brand-ink)]/10 bg-white px-5 text-xs text-[var(--brand-ink)] shadow-none hover:bg-[var(--brand-lavender)]"
-              placement="footer"
-            >
-              На сайт партнёра
-              <ExternalLink className="size-4" />
+            <Link className="font-semibold text-[var(--brand-ink)] hover:text-[var(--brand-primary)]" href="/start">Получить старт-пакет</Link>
+            <Link className="font-semibold text-[var(--brand-ink)] hover:text-[var(--brand-primary)]" href="/ip">Открыть ИП</Link>
+            <TrackedReferralLink className="mt-2 h-11 rounded-xl border border-[var(--brand-ink)]/10 bg-white px-5 text-xs text-[var(--brand-ink)] shadow-none hover:bg-[var(--brand-lavender)]" placement="footer">
+              На сайт партнёра <ExternalLink className="size-4" />
             </TrackedReferralLink>
           </div>
         </div>
