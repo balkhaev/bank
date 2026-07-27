@@ -6,46 +6,37 @@ import { Analytics } from "@/components/analytics";
 import Providers from "@/components/providers";
 
 const siteUrl = "https://delopusk.ru";
-const geologica = Geologica({
-  subsets: ["cyrillic", "latin"],
-  variable: "--font-geologica",
-});
+const geologica = Geologica({ subsets: ["cyrillic", "latin"], variable: "--font-geologica" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Делопуск — дело начинается здесь",
-    template: "%s · Делопуск",
-  },
+  title: { default: "Делопуск — запустите дело без паузы", template: "%s · Делопуск" },
   description:
-    "Сформируйте идею и бренд, подайте заявку на ИП, а пока идёт регистрация — подготовьте материалы для запуска.",
+    "Получите персональный старт-пакет, затем откройте ИП за 0 ₽ у партнёра и готовьте запуск, пока идут документы.",
   alternates: { canonical: "/" },
   applicationName: "Делопуск",
   category: "business",
   creator: "Делопуск",
   keywords: [
-    "идея бизнеса",
-    "бренд для бизнеса",
-    "запуск бизнеса",
     "открыть ИП",
     "регистрация ИП онлайн",
+    "старт-пакет бизнеса",
+    "название бизнеса",
     "карточки для бизнеса",
-    "позиционирование бизнеса",
+    "запуск бизнеса",
   ],
   openGraph: {
     type: "website",
     locale: "ru_RU",
     url: siteUrl,
     siteName: "Делопуск",
-    title: "Делопуск — дело начинается здесь",
-    description:
-      "Идея и бренд, заявка на ИП и параллельная подготовка материалов для запуска.",
+    title: "Запустите дело без паузы",
+    description: "Три вопроса, персональный старт-пакет и понятный переход к регистрации ИП.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Делопуск — дело начинается здесь",
-    description:
-      "Сформируйте идею, откройте ИП и готовьте материалы без потерянного времени.",
+    title: "Делопуск — запустите дело без паузы",
+    description: "Получите результат до перехода к официальной заявке на ИП.",
   },
   robots: {
     follow: true,
@@ -60,10 +51,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  colorScheme: "light",
-  themeColor: "#4e46c8",
-};
+export const viewport: Viewport = { colorScheme: "light", themeColor: "#4e46c8" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
