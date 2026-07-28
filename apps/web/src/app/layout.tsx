@@ -1,47 +1,45 @@
 import type { Metadata, Viewport } from "next";
+import { Geologica, Lora } from "next/font/google";
 
 import "../index.css";
 import { Analytics } from "@/components/analytics";
 import Providers from "@/components/providers";
 
 const siteUrl = "https://delopusk.ru";
+const geologica = Geologica({ subsets: ["cyrillic", "latin"], variable: "--font-geologica" });
+const lora = Lora({ subsets: ["cyrillic", "latin"], variable: "--font-lora" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Делопуск — открыть ИП онлайн за 0 ₽",
-    template: "%s · Делопуск",
-  },
+  title: { default: "Делопуск — AI-бонус за открытие ИП", template: "%s · Делопуск" },
   description:
-    "Откройте ИП онлайн через Т‑Банк и бесплатно получите старт-пакет бизнеса: позиционирование, три промо-карточки и план первой недели.",
-  alternates: {
-    canonical: "/",
-  },
+    "Попробуйте 5 AI-действий бесплатно, получите ещё 12 после заявки на ИП и Pro на 30 дней после подтверждённой регистрации и открытия РКО.",
+  alternates: { canonical: "/" },
   applicationName: "Делопуск",
   category: "business",
   creator: "Делопуск",
   keywords: [
+    "AI бонус за открытие ИП",
+    "AI карточки товара",
+    "нейросеть для маркетплейса",
+    "модельная примерка AI",
+    "описание товара AI",
     "открыть ИП",
     "регистрация ИП онлайн",
-    "ИП бесплатно",
-    "старт бизнеса",
-    "Т-Банк ИП",
-    "карточки для бизнеса",
+    "запуск бренда",
   ],
   openGraph: {
     type: "website",
     locale: "ru_RU",
     url: siteUrl,
     siteName: "Делопуск",
-    title: "Делопуск — открыть ИП онлайн за 0 ₽",
-    description:
-      "Регистрация ИП через Т‑Банк и бесплатный старт-пакет с первыми материалами для продвижения бизнеса.",
+    title: "Откройте ИП — получите AI-команду для старта",
+    description: "5 AI-действий сейчас, ещё 12 после заявки и Pro после подтверждения регистрации и РКО.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Делопуск — открыть ИП онлайн за 0 ₽",
-    description:
-      "Получите старт-пакет бизнеса и перейдите к регистрации ИП на официальной странице Т‑Банка.",
+    title: "Делопуск — AI-бонус для запуска бизнеса",
+    description: "Попробуйте AI бесплатно и откройте расширенный доступ через регистрацию ИП у партнёра.",
   },
   robots: {
     follow: true,
@@ -56,19 +54,12 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  colorScheme: "light",
-  themeColor: "#ffdd2d",
-};
+export const viewport: Viewport = { colorScheme: "dark light", themeColor: "#090812" };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className={`${geologica.variable} ${lora.variable} antialiased`}>
         <Providers>{children}</Providers>
         <Analytics />
       </body>

@@ -1,161 +1,207 @@
 # Делопуск
 
-`delopusk.ru` — партнёрский landing page для онлайн-регистрации ИП через Т‑Банк с бесплатным AI-старт-пакетом бизнеса.
+`delopusk.ru` — AI‑сервис запуска малого бизнеса и партнёрская воронка регистрации ИП.
 
-Проект создан на [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), современном TypeScript-стеке на Next.js, Hono, tRPC и общих shadcn/ui-компонентах.
+Главный оффер:
 
-## Product
+> **Откройте ИП — получите AI‑команду для старта.**
 
-- Бренд: **Делопуск**
-- Production domain: **https://delopusk.ru**
-- Основной CTA: регистрация ИП на официальной странице Т‑Банка
-- Лид-магнит: позиционирование, три промо-карточки и план первой недели
-- Страница не собирает паспортные данные и не принимает банковскую заявку самостоятельно
+Пользователь не должен регистрироваться вслепую. Сначала он пробует AI на своём товаре или услуге, видит персональный результат и только затем переходит к партнёрскому действию.
 
-## Features
+## Staged access
 
-- **TypeScript** — type safety and developer experience
-- **Next.js** — web application and metadata routes
-- **TailwindCSS** — utility-first styling
-- **Shared UI package** — shadcn/ui primitives in `packages/ui`
-- **Hono + tRPC** — API layer
-- **Bun** — runtime and package manager
-- **Drizzle + PostgreSQL** — data layer available in the monorepo
-- **Better Auth** — authentication package available in the stack
-- **Turborepo** — monorepo orchestration
-- **Biome / Ultracite** — linting and formatting
-
-## Getting Started
-
-Install dependencies:
-
-```bash
-bun install
+```text
+5 AI‑действий до регистрации
+            ↓
++12 AI‑действий после отправки заявки
+            ↓
+Pro на 30 дней после подтверждённой регистрации ИП и открытия РКО
 ```
 
-Copy the web environment template:
+- **Trial:** 5 действий, без телефона, e-mail и документов.
+- **Applied:** ещё 12 действий на 7 дней после отправки заявки у партнёра.
+- **Pro:** полный стартовый набор на 30 дней после подтверждения регистрации ИП и РКО.
 
-```bash
-cp apps/web/.env.example apps/web/.env
+AI‑бонус предоставляет Делопуск самостоятельно и за свой счёт. Он не является банковской услугой. Т‑Банк не отвечает за работу AI‑сервиса.
+
+## Funnel
+
+```text
+реклама / сегментный прелендинг
+            ↓
+/           AI‑bonus landing
+            ↓
+/start      квиз из трёх вопросов
+            ↓
+/result     персональный AI‑пакет + статус доступа
+            ↓
+/ip         партнёрский bridge и активация +12
+            ↓
+официальная партнёрская страница
 ```
 
-Start the web application:
+Сегментные входы:
 
-```bash
-bun run dev:web
+```text
+/for/marketplace
+/for/services
+/for/local
+/for/b2b
 ```
 
-Open [http://localhost:3001](http://localhost:3001).
+Они меняют рекламное обещание и стартовый сегмент квиза, но ведут в один conversion flow.
 
-## AI start pack
+## AI output
 
-- `OPENAI_API_KEY` enables generated positioning, launch checklists, and promo cards through the Responses API.
-- `OPENAI_MODEL` defaults to `gpt-5.6-luna`.
-- Without an API key, the endpoint returns deterministic templates so the landing remains usable.
-- Input and output are validated.
-- Requests use `store: false`.
-- A basic per-IP rate limit protects the endpoint.
-- The UI asks visitors not to enter personal or passport data.
+Текущий автоматический пакет включает:
+
+- рабочее название и позиционирование;
+- три направления карточки товара или услуги;
+- заголовок и описание для каталога, объявления или B2B‑коммуникации;
+- три рекламных хука;
+- три визуальных сценария;
+- план действий на время регистрации ИП.
+
+Для fashion AI добавляет сценарий модельной примерки.
+
+Следующие image‑модули пока показываются как **beta**:
+
+- финальный product packshot;
+- lifestyle‑сцена;
+- готовая модельная примерка.
+
+Текущая выдача создаёт подробный визуальный бриф, но не обещает точность размера, посадки или готовое изображение.
+
+## Pro bundle
+
+Плановый бонусный пакет после подтверждения:
+
+- до 30 карточек товара или услуги;
+- 10 AI‑сцен и рекламных композиций;
+- 5 модельных примерок;
+- тексты каталога и рекламные хуки;
+- экспорт без водяных знаков;
+- хранение проекта 30 дней.
+
+## Access implementation
+
+Текущий MVP хранит состояние в браузере:
+
+```text
+apps/web/src/lib/access.ts
+localStorage key: delopusk-access-v1
+```
+
+Реализовано:
+
+- создание trial с 5 действиями;
+- списание одного действия после успешной генерации;
+- zero-limit gate на `/ip`;
+- однократная активация +12 в текущем браузере;
+- срок applied-доступа 7 дней;
+- структура для Pro на 30 дней.
+
+Важно: self-reported активация +12 — дешёвый MVP‑механизм, а не доказательство партнёрского действия. Для production полный Pro должен включаться сервером или администратором только по подтверждённому статусу регистрации ИП и РКО. Очистка localStorage не должна влиять на оплачиваемые или дорогие лимиты.
+
+## Partner and compliance
+
+- Делопуск не является официальным сайтом Т‑Банка и не представляется его менеджером.
+- Банковская заявка и паспортные данные вводятся только на официальной странице партнёра.
+- Делопуск не принимает решение о регистрации ИП или открытии РКО.
+- AI‑бонус явно отделён от банковской услуги и предоставляется Делопуском за свой счёт.
+- До запуска платного трафика точный оффер, макеты и способы распространения должны быть письменно согласованы с Банком в Личном кабинете или по электронной почте.
+- Интернет‑реклама должна маркироваться и передаваться в ЕРИР в применимых случаях.
+
+Основание: договорные документы партнёрской программы, включая обязанность предварительного согласования материалов и способов их распространения, а также положение о бонусах, предоставляемых сторонами самостоятельно и за свой счёт.
 
 ## Analytics
 
-`NEXT_PUBLIC_YANDEX_METRICA_ID` enables the optional Yandex Metrica counter.
-
-Tracked events include:
+Основные события:
 
 ```text
+funnel_quiz_completed
+funnel_result_viewed
+ai_bonus_applied_claimed
 tbank_registration_click
-start_pack_generated
-start_pack_card_download
 ```
 
-Referral CTA events contain their placement, for example `hero-primary`, `ai-pack-result`, `final-cta`, and `mobile-sticky`.
-
-## SEO and domain
-
-The Next.js metadata configuration uses `https://delopusk.ru` as the canonical origin. The app also includes:
+Полезная последовательность для оптимизации:
 
 ```text
-/robots.txt
-/sitemap.xml
-/manifest.webmanifest
-/icon.svg
+landing_view
+→ quiz_started
+→ funnel_quiz_completed
+→ funnel_result_viewed
+→ tbank_registration_click
+→ ai_bonus_applied_claimed
+→ confirmed_ip_rko
+→ pro_activated
 ```
 
-Before production deployment, point the domain to the hosting platform and confirm HTTPS, redirects from `www`, and Yandex Webmaster ownership.
+Не следует оптимизировать закупку трафика только по клику на партнёра. Ключевая бизнес‑метрика — подтверждённая регистрация ИП и открытие РКО.
 
-## Database Setup
+## UI structure
 
-The full monorepo includes PostgreSQL with Drizzle ORM.
+```text
+apps/web/src/app/page.tsx                       AI‑bonus landing
+apps/web/src/app/start/page.tsx                 вход в квиз
+apps/web/src/app/result/page.tsx                персональный результат
+apps/web/src/app/ip/page.tsx                    партнёрский bridge
+apps/web/src/app/for/[segment]/page.tsx         рекламные прелендинги
+apps/web/src/app/api/start-pack/route.ts        генерация AI‑пакета
+apps/web/src/components/funnel-quiz.tsx         AI‑бриф и лимит
+apps/web/src/components/funnel-result.tsx       результат и upsell доступа
+apps/web/src/components/applied-bonus-button.tsx активация +12
+apps/web/src/lib/access.ts                      access tiers
+apps/web/src/components/motion-orchestrator.tsx scroll reveal
+apps/web/src/index.css                          токены и motion CSS
+```
 
-1. Configure `apps/server/.env`.
-2. Start PostgreSQL or use an existing database.
-3. Apply the schema:
+## Figma
+
+Каждый этап воронки находится на отдельной top-level странице:
+
+1. `01 Landing`
+2. `02 Quiz`
+3. `03 Result`
+4. `04 IP Bridge`
+5. `05 Segment Landing`
+6. `06 Motion Spec`
+
+Desktop и mobile собраны редактируемыми слоями. Motion показывает работу AI и изменение статуса доступа, но не использует ложную срочность, конфетти или scroll hijacking.
+
+## Local development
 
 ```bash
-bun run db:push
+bun install
+cp apps/web/.env.example apps/web/.env
+bun run dev:web
 ```
 
-## UI Customization
+Web application: `http://localhost:3001`.
 
-React web apps share shadcn/ui primitives through `packages/ui`.
+## AI configuration
 
-- Landing styles: `apps/web/src/index.css`
-- Landing page: `apps/web/src/app/page.tsx`
-- AI generator: `apps/web/src/components/ai-start-pack.tsx`
-- Shared tokens: `packages/ui/src/styles/globals.css`
-- Shared primitives: `packages/ui/src/components/*`
+- `OPENAI_API_KEY` включает генерацию через Responses API.
+- `OPENAI_MODEL` по умолчанию — `gpt-5.6-luna`.
+- Без API‑ключа endpoint возвращает сегментные детерминированные шаблоны.
+- Вход и результат валидируются через Zod и strict JSON Schema.
+- Запросы используют `store: false`.
+- Действует базовый rate limit по IP.
 
-Add shared components from the repository root:
+## Checks
 
 ```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
-```
-
-Import shared components like this:
-
-```tsx
-import { Button } from "@bank/ui/components/button";
+bun run check
+bun run check-types
+bun run build
 ```
 
 ## Deployment
 
-### Docker Compose
-
-- Build: `bun run docker:build`
-- Start: `bun run docker:up`
-- Logs: `bun run docker:logs`
-- Stop: `bun run docker:down`
-
-Environment variables are read from app-level `.env` files and can be overridden in `docker-compose.yml`.
-
-## Project Structure
-
-```text
-bank/
-├── apps/
-│   ├── web/         # Делопуск landing and AI start pack
-│   └── server/      # Hono / tRPC API
-├── packages/
-│   ├── ui/          # Shared shadcn/ui components
-│   ├── api/         # API layer
-│   ├── auth/        # Better Auth configuration
-│   └── db/          # Drizzle schema and queries
+```bash
+bun run docker:build
+bun run docker:up
+bun run docker:logs
+bun run docker:down
 ```
-
-## Available Scripts
-
-- `bun run dev`: start all applications
-- `bun run build`: build all applications
-- `bun run dev:web`: start only the web application
-- `bun run dev:server`: start only the API server
-- `bun run check-types`: run TypeScript checks
-- `bun run db:push`: push the database schema
-- `bun run db:generate`: generate database artifacts
-- `bun run db:migrate`: run migrations
-- `bun run db:studio`: open database studio
-- `bun run check`: run formatting and linting checks
-- `bun run docker:build`: build Docker images
-- `bun run docker:up`: start Docker Compose
-- `bun run docker:down`: stop Docker Compose
-- `bun run docker:logs`: tail Docker logs
