@@ -31,8 +31,8 @@ export function BrandMark({ className = "" }: { className?: string }) {
 }
 
 const navItems = [
-  { href: "/#ai-power", label: "AI‑инструменты" },
-  { href: "/#how", label: "Как открыть доступ" },
+  { href: "/#ai-power", label: "Возможности" },
+  { href: "/#how", label: "Путь к запуску" },
   { href: "/#segments", label: "Для кого" },
 ] as const;
 
@@ -44,7 +44,7 @@ export function SiteHeader() {
           <BrandMark />
           <span>
             <span className="block text-sm font-bold tracking-[-0.025em]">Делопуск</span>
-            <span className="block text-[9px] font-medium uppercase tracking-[0.14em] text-white/38">AI‑бонус для запуска</span>
+            <span className="block text-[9px] font-medium uppercase tracking-[0.14em] text-white/38">AI‑студия запуска</span>
           </span>
         </Link>
 
@@ -55,7 +55,7 @@ export function SiteHeader() {
         </nav>
 
         <Link className="inline-flex h-10 items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[var(--brand-primary-strong)]" href="/start">
-          5 AI‑действий <ArrowRight className="size-4" />
+          Начать запуск <ArrowRight className="size-4" />
         </Link>
       </div>
     </header>
@@ -76,13 +76,13 @@ export function SiteFooter() {
               Делопуск — независимый AI‑сервис и партнёрская информационная страница, не официальный сайт Т‑Банка. При переходе по ссылке и оформлении продукта владелец страницы может получить вознаграждение. Банковские услуги предоставляет АО «ТБанк», универсальная лицензия Банка России № 2673. Решение о государственной регистрации принимает ФНС.
             </p>
             <p className="mt-2 leading-6">
-              AI‑бонус предоставляет Делопуск самостоятельно и за свой счёт. Т‑Банк не отвечает за работу AI‑сервиса. Делопуск не принимает банковские заявки и не собирает паспортные данные.
+              AI‑инструменты предоставляет Делопуск самостоятельно и за свой счёт. Т‑Банк не отвечает за работу AI‑сервиса. Делопуск не принимает банковские заявки и не собирает паспортные данные.
             </p>
           </div>
 
           <div className="grid content-start gap-3 text-xs">
-            <Link className="font-semibold text-white hover:text-[var(--brand-violet-soft)]" href="/start">Попробовать AI</Link>
-            <Link className="font-semibold text-white hover:text-[var(--brand-violet-soft)]" href="/ip">Условия AI‑бонуса</Link>
+            <Link className="font-semibold text-white hover:text-[var(--brand-violet-soft)]" href="/start">Начать запуск</Link>
+            <Link className="font-semibold text-white hover:text-[var(--brand-violet-soft)]" href="/ip">Открыть ИП</Link>
             <TrackedReferralLink className="mt-2 h-11 rounded-xl border border-white/12 bg-white/[0.04] px-5 text-xs text-white shadow-none hover:bg-white/[0.08]" placement="footer">
               На сайт партнёра <ExternalLink className="size-4" />
             </TrackedReferralLink>
