@@ -8,6 +8,7 @@ import {
   Check,
   Clipboard,
   FileCheck2,
+  Gift,
   Image as ImageIcon,
   LoaderCircle,
   Megaphone,
@@ -15,12 +16,12 @@ import {
   Search,
   Sparkles,
   WandSparkles,
-  type LucideIcon,
 } from "lucide-react";
 
 import { cn } from "@bank/ui/lib/utils";
 
 import { TrackedReferralLink } from "@/components/tracked-referral-link";
+import { accessTierLabel, readAccessState, type AccessState } from "@/lib/access";
 import type { FunnelResult } from "@/lib/funnel";
 
 const cardTones = [
@@ -29,39 +30,33 @@ const cardTones = [
   "bg-[var(--brand-mint)] text-[var(--brand-ink)]",
 ] as const;
 
-const readyModules: Array<{ icon: LucideIcon; label: string }> = [
+const readyModules = [
   { icon: WandSparkles, label: "Позиционирование" },
   { icon: ImageIcon, label: "3 карточки" },
   { icon: Search, label: "Текст каталога" },
   { icon: Megaphone, label: "Рекламные хуки" },
-];
-
-const advancedModules: Array<{
-  description: string;
-  icon: LucideIcon;
-  status?: string;
-  title: string;
-}> = [
-  { icon: ImageIcon, title: "Чистый packshot", description: "Удаление фона и аккуратная товарная сцена" },
-  { icon: Camera, title: "Lifestyle‑кадр", description: "Товар в реальном сценарии использования" },
-  { icon: ScanFace, title: "Модельная примерка", description: "Одежда или аксессуар на AI‑модели", status: "beta" },
-];
+] as const;
 
 const apparelPattern = /(одежд|плать|футбол|худи|рубаш|брюк|джинс|юбк|костюм|куртк|пальто|свит|обув|кроссов|сумк)/i;
 
 export function FunnelResultView() {
   const [result, setResult] = useState<FunnelResult | null>(null);
+  const [access, setAccess] = useState<AccessState | null>(null);
   const [ready, setReady] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    setAccess(readAccessState());
     const raw = window.localStorage.getItem("delopusk-funnel-result");
     if (raw) {
       try {
         const parsed = JSON.parse(raw) as FunnelResult;
         if (parsed.pack?.projectName) {
           setResult(parsed);
-          window.dataLayer?.push({ event: "funnel_result_viewed", business_type: parsed.businessType });
+          window.dataLayer?.push({
+            event: "funnel_result_viewed",
+            business_type: parsed.businessType,
+          });
         }
       } catch {
         window.localStorage.removeItem("delopusk-funnel-result");
@@ -101,11 +96,7 @@ export function FunnelResultView() {
   };
 
   if (!ready) {
-    return (
-      <div className="flex min-h-[65vh] items-center justify-center">
-        <LoaderCircle className="size-6 animate-spin text-[var(--brand-violet-soft)]" />
-      </div>
-    );
+    return <div className="flex min-h-[65vh] items-center justify-center"><LoaderCircle className="size-6 animate-spin text-[var(--brand-violet-soft)]" /></div>;
   }
 
   if (!result) {
@@ -122,6 +113,8 @@ export function FunnelResultView() {
 
   const isFashion = result.businessType === "marketplace" && apparelPattern.test(result.subject);
   const contentLabel = result.businessType === "marketplace" ? "Карточка товара" : result.businessType === "b2b" ? "Коммерческий текст" : "Текст объявления";
+  const isPro = access?.tier === "pro";
+  const isApplied = access?.tier === "applied";
 
   return (
     <>
@@ -158,15 +151,31 @@ export function FunnelResultView() {
             </div>
 
             <aside className="rounded-[2.6rem] border border-white/8 bg-white/[0.045] p-6 text-white backdrop-blur sm:p-8" data-reveal data-reveal-delay="100">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--brand-mint)]">следующий шаг</p>
-              <h2 className="font-editorial mt-5 text-balance text-4xl leading-[1.02] tracking-[-0.04em]">Закрепите запуск юридически.</h2>
-              <p className="mt-5 text-sm leading-7 text-white/52">Ваш AI‑пакет останется в браузере. Заявка на ИП откроется отдельно на официальном сайте партнёра.</p>
-              <TrackedReferralLink className="mt-8 w-full bg-[var(--brand-coral)] text-white shadow-none hover:bg-[var(--brand-coral-strong)]" openInNewTab placement="result-above-fold">
-                Открыть ИП за 0 ₽ <ArrowRight className="size-5" />
-              </TrackedReferralLink>
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--brand-mint)]">ваш доступ</p>
+              <h2 className="font-editorial mt-5 text-balance text-4xl leading-[1.02] tracking-[-0.04em]">
+                {isPro ? "Pro уже активен." : isApplied ? "Бонус после заявки активирован." : "Получите ещё 12 действий."}
+              </h2>
+              <p className="mt-5 text-sm leading-7 text-white/52">
+                {isPro
+                  ? "Используйте AI‑инструменты без пробного лимита в течение бонусного периода."
+                  : isApplied
+                    ? `Продолжайте собирать материалы. ${access ? accessTierLabel(access) : ""}`
+                    : "Отправьте заявку на ИП на официальной странице партнёра и вернитесь в Делопуск."}
+              </p>
+              {!isPro && !isApplied && (
+                <Link className="mt-8 inline-flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-2xl bg-[var(--brand-coral)] px-6 text-sm font-semibold text-white transition hover:bg-[var(--brand-coral-strong)]" href="/ip">
+                  Открыть ИП и получить +12 <ArrowRight className="size-5" />
+                </Link>
+              )}
+              {(isPro || isApplied) && (
+                <Link className="mt-8 inline-flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-2xl bg-white px-6 text-sm font-semibold text-[var(--brand-ink)]" href="/start">
+                  Создать ещё один пакет <ArrowRight className="size-4" />
+                </Link>
+              )}
               <div className="mt-5 grid grid-cols-3 gap-2 text-center text-[10px] font-semibold text-white/55">
-                {["0 ₽", "онлайн", "у партнёра"].map((item) => <span className="rounded-xl bg-white/[0.06] px-2 py-3" key={item}>{item}</span>)}
+                {["5 сейчас", "+12 заявка", "Pro 30 дней"].map((item) => <span className="rounded-xl bg-white/[0.06] px-2 py-3" key={item}>{item}</span>)}
               </div>
+              <p className="mt-4 text-[10px] leading-5 text-white/30">AI‑бонус предоставляет Делопуск за свой счёт. Партнёр не отвечает за AI‑сервис.</p>
             </aside>
           </div>
         </div>
@@ -179,17 +188,12 @@ export function FunnelResultView() {
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]">AI‑креативный директор</p>
               <h2 className="font-editorial mt-4 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Три направления карточки.</h2>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-[var(--brand-muted)]">Быстрые рабочие концепции, чтобы начать не с пустого листа.</p>
+            <p className="max-w-xl text-sm leading-7 text-[var(--brand-muted)]">Рабочие концепции, чтобы начать не с пустого листа.</p>
           </div>
 
           <div className="mt-10 grid gap-4 lg:grid-cols-3">
             {result.pack.cards.map((card, index) => (
-              <article
-                className={cn("brand-result-card flex min-h-[27rem] flex-col rounded-[2.1rem] border border-black/8 p-6", cardTones[index])}
-                data-reveal
-                data-reveal-delay={String(index * 90)}
-                key={`${card.title}-${index}`}
-              >
+              <article className={cn("brand-result-card flex min-h-[27rem] flex-col rounded-[2.1rem] border border-black/8 p-6", cardTones[index])} data-reveal data-reveal-delay={String(index * 90)} key={`${card.title}-${index}`}>
                 <div className="flex items-center justify-between gap-4 text-xs font-bold opacity-65"><span>{result.pack.projectName}</span><span>0{index + 1}</span></div>
                 <div className="mt-12 h-24 rounded-[1.5rem] border border-current/10 bg-white/10 p-4">
                   <div className="h-2 w-2/3 rounded-full bg-current/20" />
@@ -248,51 +252,30 @@ export function FunnelResultView() {
       </section>
 
       <section className="premium-dark-section py-14 text-white sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
-            <div data-reveal>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--brand-mint)]">следующие AI‑модули</p>
-              <h2 className="font-editorial mt-5 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Из брифа — в визуальный контент.</h2>
-              <p className="mt-5 text-sm leading-7 text-white/50">Базовый пакет уже работает. Генерация финальных изображений помечена как beta.</p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {advancedModules.map(({ icon: Icon, title, description, status }, index) => (
-                <article className={cn("rounded-[2rem] border border-white/10 p-5", index === 2 ? "bg-[var(--brand-coral)]" : "bg-white/[0.055]")} data-reveal data-reveal-delay={String(index * 80)} key={title}>
-                  <div className="flex items-center justify-between gap-3"><span className="flex size-11 items-center justify-center rounded-2xl bg-white text-[var(--brand-ink)]"><Icon className="size-5" /></span>{status && <span className="rounded-full bg-[var(--brand-ink)] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em]">{status}</span>}</div>
-                  <h3 className="mt-7 text-xl font-semibold">{title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-white/50">{description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[var(--brand-paper)] py-14 text-[var(--brand-ink)] sm:py-20">
-        <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 lg:grid-cols-[1fr_0.72fr] lg:px-8">
-          <article className="rounded-[2.4rem] bg-[var(--brand-mint)] p-7" data-reveal>
-            <span className="flex size-12 items-center justify-center rounded-2xl bg-[var(--brand-primary)] text-white"><Sparkles className="size-5" /></span>
-            <h2 className="font-editorial mt-7 text-3xl tracking-[-0.035em]">Пока идут документы</h2>
-            <ol className="mt-6 grid gap-3 sm:grid-cols-2">{result.pack.checklist.map((item, index) => <li className="flex gap-3 rounded-2xl bg-white/65 p-4 text-sm leading-6 text-[var(--brand-muted)]" key={item}><span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-primary)] text-xs font-bold text-white">{index + 1}</span>{item}</li>)}</ol>
-            <Link className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-primary)]" href="/start">Изменить ответы <ArrowRight className="size-4" /></Link>
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[0.78fr_1.22fr] lg:px-8">
+          <article className="rounded-[2.4rem] border border-white/8 bg-white/[0.045] p-7" data-reveal>
+            <Gift className="size-7 text-[var(--brand-mint)]" />
+            <h2 className="font-editorial mt-6 text-4xl leading-[1.02] tracking-[-0.04em]">Полный AI‑пакет после подтверждения.</h2>
+            <p className="mt-5 text-sm leading-7 text-white/52">Pro на 30 дней: до 30 карточек, 10 AI‑сцен, 5 примерок, экспорт без водяных знаков.</p>
           </article>
-
           <article className="premium-cta rounded-[2.4rem] p-7 text-white" data-reveal data-reveal-delay="100">
             <FileCheck2 className="size-7 text-[var(--brand-mint)]" />
-            <h2 className="font-editorial mt-6 text-4xl leading-[1.02] tracking-[-0.04em]">AI‑пакет готов. Оформите ИП.</h2>
-            <p className="mt-5 text-sm leading-7 text-white/55">Регистрация проходит отдельно на официальном сайте партнёра.</p>
-            <TrackedReferralLink className="mt-8 w-full bg-white text-[var(--brand-ink)] shadow-none hover:bg-[var(--brand-paper)]" openInNewTab placement="result-bottom">
-              Открыть ИП за 0 ₽ <ArrowRight className="size-5" />
-            </TrackedReferralLink>
+            <h2 className="font-editorial mt-6 text-4xl leading-[1.02] tracking-[-0.04em]">Откройте ИП — продолжайте без паузы.</h2>
+            <p className="mt-5 text-sm leading-7 text-white/55">После заявки вернитесь и откройте временный бонус. Полный доступ — после подтверждённой регистрации и РКО.</p>
+            <Link className="mt-8 inline-flex h-[3.25rem] w-full items-center justify-center gap-2 rounded-2xl bg-white px-6 text-sm font-semibold text-[var(--brand-ink)]" href="/ip">
+              Получить доступ <ArrowRight className="size-5" />
+            </Link>
           </article>
         </div>
       </section>
 
-      <div className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-white/10 bg-[var(--brand-ink)]/95 p-2 shadow-2xl backdrop-blur sm:hidden">
-        <TrackedReferralLink className="h-12 w-full bg-[var(--brand-primary)] text-white shadow-none" openInNewTab placement="result-mobile-sticky">
-          Открыть ИП за 0 ₽ <FileCheck2 className="size-4" />
-        </TrackedReferralLink>
-      </div>
+      {!isPro && !isApplied && (
+        <div className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-white/10 bg-[var(--brand-ink)]/95 p-2 shadow-2xl backdrop-blur sm:hidden">
+          <Link className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 text-sm font-semibold text-white" href="/ip">
+            Получить +12 действий <Gift className="size-4" />
+          </Link>
+        </div>
+      )}
     </>
   );
 }
