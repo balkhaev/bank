@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, ExternalLink, Gift, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Check, ExternalLink, Gift, ShieldCheck } from "lucide-react";
 
 import { AppliedBonusButton } from "@/components/applied-bonus-button";
 import { FunnelShell } from "@/components/funnel-shell";
