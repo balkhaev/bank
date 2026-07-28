@@ -81,7 +81,7 @@ export function consumeAccessAction(): AccessState {
 
 export function claimAppliedBonus(): AccessState {
   const current = readAccessState();
-  if (current.tier === "pro") return current;
+  if (current.tier === "pro" || current.tier === "applied") return current;
 
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
   return writeAccessState({
