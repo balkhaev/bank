@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Gift,
   Image as ImageIcon,
   LoaderCircle,
+  LockKeyhole,
   Megaphone,
   ScanFace,
   Search,
@@ -17,6 +20,12 @@ import {
 import { Button } from "@bank/ui/components/button";
 import { cn } from "@bank/ui/lib/utils";
 
+import {
+  accessTierLabel,
+  consumeAccessAction,
+  readAccessState,
+  type AccessState,
+} from "@/lib/access";
 import {
   businessOptions,
   tones,
@@ -32,9 +41,9 @@ type ApiResponse = {
 };
 
 const studioTools = [
-  { icon: ImageIcon, label: "Карточки и визуальные сценарии", status: "в пакете" },
-  { icon: Search, label: "Заголовок и описание", status: "в пакете" },
-  { icon: Megaphone, label: "Рекламные хуки", status: "в пакете" },
+  { icon: ImageIcon, label: "Карточки и визуальные сценарии", status: "готово" },
+  { icon: Search, label: "Заголовок и описание", status: "готово" },
+  { icon: Megaphone, label: "Рекламные хуки", status: "готово" },
   { icon: ScanFace, label: "Модельная примерка", status: "beta" },
 ] as const;
 
@@ -47,6 +56,11 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
   const [tone, setTone] = useState<Tone>("confident");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [access, setAccess] = useState<AccessState | null>(null);
+
+  useEffect(() => {
+    setAccess(readAccessState());
+  }, []);
 
   const progress = ((step + 1) / 3) * 100;
   const selectedBusiness = useMemo(
@@ -56,6 +70,7 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
 
   const canContinue =
     step === 0 || (step === 1 && subject.trim().length >= 3) || (step === 2 && audience.trim().length >= 2);
+  const outOfActions = Boolean(access && access.remaining !== null && access.remaining <= 0);
 
   const next = () => {
     if (!canContinue) {
@@ -67,6 +82,10 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
   };
 
   const generate = async () => {
+    if (outOfActions) {
+      router.push("/ip?reason=limit");
+      return;
+    }
     if (!canContinue) {
       setError("Укажите, для кого ваш продукт или услуга.");
       return;
@@ -74,7 +93,11 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
 
     setError("");
     setIsLoading(true);
-    window.dataLayer?.push({ event: "funnel_quiz_completed", business_type: businessType });
+    window.dataLayer?.push({
+      event: "funnel_quiz_completed",
+      business_type: businessType,
+      access_tier: access?.tier ?? "trial",
+    });
 
     try {
       const response = await fetch("/api/start-pack", {
@@ -87,6 +110,8 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
         throw new Error(payload.error || "Не получилось собрать AI-пакет.");
       }
 
+      const nextAccess = consumeAccessAction();
+      setAccess(nextAccess);
       window.localStorage.setItem(
         "delopusk-funnel-result",
         JSON.stringify({ audience, businessType, mode: payload.mode, pack: payload.pack, subject, tone }),
@@ -110,13 +135,23 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
             <Sparkles className="size-4 text-[var(--brand-mint)]" /> Делопуск AI Studio
           </span>
           <h2 className="font-editorial relative mt-8 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-5xl">
-            Короткий бриф для AI‑команды.
+            Пять действий, чтобы проверить AI на своём бизнесе.
           </h2>
           <p className="relative mt-5 max-w-md text-sm leading-7 text-white/52">
             Три ответа превращаются в комплект для каталога, рекламы и первого запуска.
           </p>
 
-          <div className="relative mt-10 grid gap-3">
+          <div className="relative mt-8 rounded-[1.5rem] border border-[var(--brand-mint)]/20 bg-[var(--brand-mint)]/8 p-4">
+            <div className="flex items-center gap-3">
+              <span className="flex size-10 items-center justify-center rounded-2xl bg-[var(--brand-mint)] text-[var(--brand-ink)]"><Gift className="size-5" /></span>
+              <div>
+                <p className="text-sm font-semibold">{access ? accessTierLabel(access) : "Пробный доступ · 5 из 5"}</p>
+                <p className="mt-1 text-xs text-white/40">После заявки откроем ещё 12 действий на 7 дней.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative mt-6 grid gap-3">
             {studioTools.map((tool, index) => {
               const Icon = tool.icon;
               return (
@@ -136,8 +171,8 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
             })}
           </div>
 
-          <p className="relative mt-8 text-xs leading-5 text-white/35">
-            AI-примерка и генерация готовых изображений отмечены как beta: базовый пакет уже создаёт тексты, карточки и точные визуальные брифы.
+          <p className="relative mt-7 text-xs leading-5 text-white/35">
+            AI‑бонус предоставляет Делопуск за свой счёт. Полный Pro‑доступ открывается после подтверждённой регистрации ИП и открытия РКО.
           </p>
         </aside>
 
@@ -154,119 +189,131 @@ export function FunnelQuiz({ initialSegment = "marketplace" }: { initialSegment?
             <div className="h-full rounded-full bg-[var(--brand-primary)] transition-[width] duration-500" style={{ width: `${progress}%` }} />
           </div>
 
-          <div className="min-h-[36rem] rounded-[2.5rem] bg-[var(--brand-paper)] p-6 text-[var(--brand-ink)] shadow-[0_48px_120px_-70px_rgba(0,0,0,0.9)] sm:p-10">
-            {step === 0 && (
-              <div data-reveal>
-                <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 1 · формат</p>
-                <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Что запускаем?</h1>
-                <p className="mt-4 text-base leading-7 text-[var(--brand-muted)]">От этого зависит набор карточек, текстов и визуальных сценариев.</p>
-                <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                  {businessOptions.map((option) => {
-                    const active = option.value === businessType;
-                    return (
+          {outOfActions ? (
+            <div className="flex min-h-[36rem] flex-col justify-center rounded-[2.5rem] bg-[var(--brand-paper)] p-6 text-[var(--brand-ink)] shadow-[0_48px_120px_-70px_rgba(0,0,0,0.9)] sm:p-10" data-reveal>
+              <span className="flex size-14 items-center justify-center rounded-2xl bg-[var(--brand-lavender)] text-[var(--brand-primary)]"><LockKeyhole className="size-6" /></span>
+              <p className="mt-8 text-sm font-semibold text-[var(--brand-primary)]">Пробный лимит использован</p>
+              <h1 className="font-editorial mt-3 max-w-3xl text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Отправьте заявку на ИП — получите ещё 12 AI‑действий.</h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--brand-muted)]">Заявка оформляется на официальной странице партнёра. После отправки вернитесь и активируйте временный бонус.</p>
+              <Link className="mt-8 inline-flex h-13 w-fit items-center justify-center gap-2 rounded-2xl bg-[var(--brand-primary)] px-7 text-sm font-semibold text-white" href="/ip?reason=limit">
+                Получить +12 действий <ArrowRight className="size-4" />
+              </Link>
+            </div>
+          ) : (
+            <div className="min-h-[36rem] rounded-[2.5rem] bg-[var(--brand-paper)] p-6 text-[var(--brand-ink)] shadow-[0_48px_120px_-70px_rgba(0,0,0,0.9)] sm:p-10">
+              {step === 0 && (
+                <div data-reveal>
+                  <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 1 · формат</p>
+                  <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Что запускаем?</h1>
+                  <p className="mt-4 text-base leading-7 text-[var(--brand-muted)]">От этого зависит набор карточек, текстов и визуальных сценариев.</p>
+                  <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                    {businessOptions.map((option) => {
+                      const active = option.value === businessType;
+                      return (
+                        <button
+                          className={cn(
+                            "rounded-[1.6rem] border p-5 text-left transition",
+                            active
+                              ? "border-[var(--brand-primary)] bg-[var(--brand-lavender)] ring-4 ring-[var(--brand-primary)]/8"
+                              : "border-black/8 bg-white hover:border-[var(--brand-primary)]/35",
+                          )}
+                          key={option.value}
+                          onClick={() => setBusinessType(option.value)}
+                          type="button"
+                        >
+                          <span className="flex items-center justify-between gap-4">
+                            <span className="font-semibold">{option.label}</span>
+                            <span className={cn("flex size-7 items-center justify-center rounded-full", active ? "bg-[var(--brand-primary)] text-white" : "bg-[var(--brand-paper-deep)]")}>
+                              {active && <Check className="size-4" strokeWidth={3} />}
+                            </span>
+                          </span>
+                          <span className="mt-2 block text-sm leading-6 text-[var(--brand-muted)]">{option.description}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {step === 1 && (
+                <div data-reveal>
+                  <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 2 · продукт</p>
+                  <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Что нужно продать?</h1>
+                  <p className="mt-4 text-base leading-7 text-[var(--brand-muted)]">Опишите товар или услугу обычными словами. AI сам соберёт структуру предложения.</p>
+                  <textarea
+                    autoFocus
+                    className="mt-8 min-h-48 w-full resize-none rounded-[1.6rem] border border-black/10 bg-white p-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
+                    maxLength={120}
+                    onChange={(event) => setSubject(event.target.value)}
+                    placeholder={selectedBusiness.value === "marketplace" ? "Например: льняное платье свободного кроя" : "Например: дизайн интерьера квартиры под ключ"}
+                    value={subject}
+                  />
+                  {businessType === "marketplace" && (
+                    <p className="mt-4 rounded-2xl bg-[var(--brand-mint)]/65 px-4 py-3 text-sm leading-6 text-[var(--brand-muted)]">
+                      Для одежды AI добавит сценарий модельной примерки; для других товаров — packshot, lifestyle и детальный кадр.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {step === 2 && (
+                <div data-reveal>
+                  <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 3 · аудитория</p>
+                  <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Кто должен захотеть это?</h1>
+                  <input
+                    autoFocus
+                    className="mt-8 h-16 w-full rounded-[1.4rem] border border-black/10 bg-white px-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
+                    maxLength={100}
+                    onChange={(event) => setAudience(event.target.value)}
+                    placeholder="Например: женщины 25–40 лет, которым важны комфорт и натуральные ткани"
+                    value={audience}
+                  />
+                  <p className="mt-7 text-sm font-semibold">Характер бренда</p>
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {tones.map((option) => (
                       <button
                         className={cn(
-                          "rounded-[1.6rem] border p-5 text-left transition",
-                          active
-                            ? "border-[var(--brand-primary)] bg-[var(--brand-lavender)] ring-4 ring-[var(--brand-primary)]/8"
-                            : "border-black/8 bg-white hover:border-[var(--brand-primary)]/35",
+                          "h-12 rounded-xl border px-2 text-xs font-semibold transition sm:text-sm",
+                          tone === option.value
+                            ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white"
+                            : "border-black/8 bg-white hover:bg-[var(--brand-lavender)]",
                         )}
                         key={option.value}
-                        onClick={() => setBusinessType(option.value)}
+                        onClick={() => setTone(option.value)}
                         type="button"
                       >
-                        <span className="flex items-center justify-between gap-4">
-                          <span className="font-semibold">{option.label}</span>
-                          <span className={cn("flex size-7 items-center justify-center rounded-full", active ? "bg-[var(--brand-primary)] text-white" : "bg-[var(--brand-paper-deep)]")}>
-                            {active && <Check className="size-4" strokeWidth={3} />}
-                          </span>
-                        </span>
-                        <span className="mt-2 block text-sm leading-6 text-[var(--brand-muted)]">{option.description}</span>
+                        {option.label}
                       </button>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {step === 1 && (
-              <div data-reveal>
-                <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 2 · продукт</p>
-                <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Что нужно продать?</h1>
-                <p className="mt-4 text-base leading-7 text-[var(--brand-muted)]">Опишите товар или услугу обычными словами. AI сам соберёт структуру предложения.</p>
-                <textarea
-                  autoFocus
-                  className="mt-8 min-h-48 w-full resize-none rounded-[1.6rem] border border-black/10 bg-white p-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
-                  maxLength={120}
-                  onChange={(event) => setSubject(event.target.value)}
-                  placeholder={selectedBusiness.value === "marketplace" ? "Например: льняное платье свободного кроя" : "Например: дизайн интерьера квартиры под ключ"}
-                  value={subject}
-                />
-                {businessType === "marketplace" && (
-                  <p className="mt-4 rounded-2xl bg-[var(--brand-mint)]/65 px-4 py-3 text-sm leading-6 text-[var(--brand-muted)]">
-                    Для одежды AI добавит сценарий модельной примерки; для других товаров — packshot, lifestyle и детальный кадр.
-                  </p>
+              {error && <p className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{error}</p>}
+
+              <div className="mt-9 flex items-center justify-between gap-3">
+                <button
+                  className={cn("inline-flex h-12 items-center gap-2 px-2 text-sm font-semibold text-[var(--brand-muted)]", step === 0 && "invisible")}
+                  onClick={() => { setError(""); setStep((current) => Math.max(0, current - 1)); }}
+                  type="button"
+                >
+                  <ArrowLeft className="size-4" /> Назад
+                </button>
+                {step < 2 ? (
+                  <Button className="h-12 rounded-xl px-6" onClick={next} type="button">
+                    Продолжить <ArrowRight className="size-4" />
+                  </Button>
+                ) : (
+                  <Button className="motion-shimmer h-12 rounded-xl px-6" disabled={isLoading} onClick={generate} type="button">
+                    {isLoading ? <><LoaderCircle className="size-4 animate-spin" /> AI работает…</> : <><Sparkles className="size-4" /> Создать AI‑пакет</>}
+                  </Button>
                 )}
               </div>
-            )}
-
-            {step === 2 && (
-              <div data-reveal>
-                <p className="text-sm font-semibold text-[var(--brand-primary)]">Шаг 3 · аудитория</p>
-                <h1 className="font-editorial mt-3 text-balance text-4xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">Кто должен захотеть это?</h1>
-                <input
-                  autoFocus
-                  className="mt-8 h-16 w-full rounded-[1.4rem] border border-black/10 bg-white px-5 text-lg outline-none transition placeholder:text-[var(--brand-muted)]/45 focus:border-[var(--brand-primary)] focus:ring-4 focus:ring-[var(--brand-primary)]/8"
-                  maxLength={100}
-                  onChange={(event) => setAudience(event.target.value)}
-                  placeholder="Например: женщины 25–40 лет, которым важны комфорт и натуральные ткани"
-                  value={audience}
-                />
-                <p className="mt-7 text-sm font-semibold">Характер бренда</p>
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {tones.map((option) => (
-                    <button
-                      className={cn(
-                        "h-12 rounded-xl border px-2 text-xs font-semibold transition sm:text-sm",
-                        tone === option.value
-                          ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white"
-                          : "border-black/8 bg-white hover:bg-[var(--brand-lavender)]",
-                      )}
-                      key={option.value}
-                      onClick={() => setTone(option.value)}
-                      type="button"
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {error && <p className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{error}</p>}
-
-            <div className="mt-9 flex items-center justify-between gap-3">
-              <button
-                className={cn("inline-flex h-12 items-center gap-2 px-2 text-sm font-semibold text-[var(--brand-muted)]", step === 0 && "invisible")}
-                onClick={() => { setError(""); setStep((current) => Math.max(0, current - 1)); }}
-                type="button"
-              >
-                <ArrowLeft className="size-4" /> Назад
-              </button>
-              {step < 2 ? (
-                <Button className="h-12 rounded-xl px-6" onClick={next} type="button">
-                  Продолжить <ArrowRight className="size-4" />
-                </Button>
-              ) : (
-                <Button className="motion-shimmer h-12 rounded-xl px-6" disabled={isLoading} onClick={generate} type="button">
-                  {isLoading ? <><LoaderCircle className="size-4 animate-spin" /> AI работает…</> : <><Sparkles className="size-4" /> Создать AI‑пакет</>}
-                </Button>
-              )}
             </div>
-          </div>
+          )}
 
           <p className="mt-5 text-center text-xs leading-5 text-white/32">
-            Без телефона, e-mail и паспортных данных. Результат сохраняется только в вашем браузере.
+            Без телефона, e-mail и паспортных данных. Пробный лимит хранится в этом браузере.
           </p>
         </div>
       </div>
